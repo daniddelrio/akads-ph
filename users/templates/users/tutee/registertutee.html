@@ -1,0 +1,248 @@
+{% extends "../base.html"%}
+
+{% block body %}
+<body>
+{% endblock %}
+
+{%block content%}
+  <div class = 'container register'>
+    <form method = "POST">
+      {% csrf_token %}
+        {% load static %}
+        <div class="tab">
+          <div>
+            <img src="{% static 'users/img/tutee1.png' %}">
+          </div>
+          <div class="wrapper">
+            <h4 class="akads-blue-text">Create an Account</h4>
+            <div class="form-group input-field">
+              <input id="username" type="text" name="username" class="validate">
+              <label for="username">Username</label>
+            </div>
+            <div class="form-group input-field">
+              <input id="firstname" type="text" name="firstname" class="validate">
+              <label for="firstname">First Name</label>
+            </div>
+            <div class="form-group input-field">
+              <input id="lastname" type="text" name="lastname" class="validate">
+              <label for="lastname">Last Name</label>
+            </div>
+            <div class="form-group input-field">
+              <input id="password1" type="password" name="password1" class="validate">
+              <label for="password1">Password</label>
+            </div>
+            <div class="form-group input-field">
+              <input id="password2" type="password" name="password2" class="validate">
+              <label for="password2">Re-enter Password</label>
+            </div>
+            <div class="form-group input-field">
+              <input id="email" type="text" name="email" class="validate">
+              <label for="email">Email</label>
+            </div>
+          </div>
+        </div>
+        <div class="tab">
+          <div>
+            <img src="{% static 'users/img/tutee2.png' %}">
+          </div>
+          <div class="wrapper">
+            <h4 class="akads-blue-text">Location</h4>
+            <div class="form-group input-field">
+              <input id="housenum" type="text" name="housenum" class="validate">
+              <label for="housenum">House Number, Building, and Street Name:</label>
+            </div>
+            <div class="form-group input-field">
+              <input id="province" type="text" name="province" class="validate">
+              <label for="province">Province:</label>
+            </div>
+            <div class="form-group input-field">
+              <select id="location-select" type="text" name="city">
+                <option value="Manila">Manila</option>
+                <option value="Quezon City">Quezon City</option>
+                <option value="Caloocan">Caloocan</option>
+                <option value="Las Piñas">Las Piñas</option>
+                <option value="Makati">Makati</option>
+                <option value="Malabon">Malabon</option>
+                <option value="Mandaluyong">Mandaluyong</option>
+                <option value="Marikina">Marikina</option>
+                <option value="Muntinlupa">Muntinlupa</option>
+                <option value="Navotas">Navotas</option>
+                <option value="Parañaque">Parañaque</option>
+                <option value="Pasay">Pasay</option>
+                <option value="Pasig">Pasig</option>
+                <option value="San Juan">San Juan</option>
+                <option value="Taguig">Taguig</option>
+                <option value="Valenzuela">Valenzuela</option>
+              </select>
+              <label>Choose city:</label>
+            </div>
+            <div class="form-group input-field">
+              <input id="barangay" type="text" name="barangay" class="validate">
+              <label for="barangay">Barangay:</label>
+            </div>
+            <div class="form-group input-field">
+              <input id="cellnum" type="text" name="cellnum" class="validate">
+              <label for="cellnum">Cell No.:</label>
+            </div>
+          </div>
+        </div>
+        <div class="tab">
+          <div>
+            <img src="{% static 'users/img/tutee3.png' %}">
+          </div>
+          <div class="wrapper">
+            <h4 class="akads-blue-text">About Me</h4>
+            <!-- <div class="form-group input-field">
+              <input id="birthday" type="text" name="birthday" class="datepicker">
+              <label for="birthday">Date of Birth</label>
+            </div> -->
+            <div>
+              <label>Birthday</label>
+              <div id="birthday" type="text" class="datepicker-here" data-language='en'></div>
+              <input id="hidden-birthday" class="hidden" type="text" name="birthday">
+            </div>
+            <div class="form-group sex">
+              <label class="sex-label">Sex:</label>
+              <label for="male">
+                <input id="male" value="male" name="sex" type="radio">
+                <span>Male</span>
+              </label>
+              &nbsp;&ensp;
+              <span>
+                <label for="female">
+                    <input id="female" value="female" name="sex" type="radio">
+                    <span>Female</span>
+                </label>
+              </span>
+            </div>
+            <div class="form-group input-field bio">
+              <textarea id="bio" name="bio" class="materialize-textarea validate"></textarea>
+              <label for="bio">Bio</label>
+            </div>
+          </div>
+        </div>
+        <div class="tab">
+          <div>
+            <img src="{% static 'users/img/tutee4.png' %}">
+          </div>
+          <div class="wrapper">
+            <h4 class="akads-blue-text">Payment Methods</h4>
+            <div class="form-group input-field">
+              <input id="cardnum" type="text" name="cardnum" class="validate">
+              <label for="cardnum">Card Number:</label>
+            </div>
+            <div class="form-group input-field">
+              <input id="fullname" type="text" name="fullname" class="validate">
+              <label for="fullname">Full Name:</label>
+            </div>
+            <div class="form-group input-field">
+              <select type="text" name="expiry_date"> <!-- combined expiry_month and expiry_year. please catch in backend -->
+                <option value="01/2020">01/2020</option>
+                <option value="02/2020">02/2020</option>
+                <option value="03/2020">03/2020</option>
+                <option value="04/2020">04/2020</option>
+                <option value="05/2020">05/2020</option>
+                <option value="06/2020">06/2020</option>
+                <option value="07/2020">07/2020</option>
+                <option value="08/2020">08/2020</option>
+                <option value="09/2020">09/2020</option>
+                <option value="10/2020">10/2020</option>
+                <option value="11/2020">11/2020</option>
+                <option value="12/2020">12/2020</option>
+                <option value="01/2021">01/2021</option>
+                <option value="02/2021">02/2021</option>
+                <option value="03/2021">03/2021</option>
+                <option value="04/2021">04/2021</option>
+                <option value="05/2021">05/2021</option>
+                <option value="06/2021">06/2021</option>
+                <option value="07/2021">07/2021</option>
+                <option value="08/2021">08/2021</option>
+                <option value="09/2021">09/2021</option>
+                <option value="10/2021">10/2021</option>
+                <option value="11/2021">11/2021</option>
+                <option value="12/2021">12/2021</option>
+                <option value="01/2022">01/2022</option>
+                <option value="02/2022">02/2022</option>
+                <option value="03/2022">03/2022</option>
+                <option value="04/2022">04/2022</option>
+                <option value="05/2022">05/2022</option>
+                <option value="06/2022">06/2022</option>
+                <option value="07/2022">07/2022</option>
+                <option value="08/2022">08/2022</option>
+                <option value="09/2022">09/2022</option>
+                <option value="10/2022">10/2022</option>
+                <option value="11/2022">11/2022</option>
+                <option value="12/2022">12/2022</option>
+              </select>
+              <label>Expiry Date:</label>
+            </div>
+            <div class="form-group input-field">
+              <input id="seccode" type="text" name="seccode" class="validate">
+              <label for="seccode">Security Code:</label>
+            </div>
+          </div>
+        </div>
+        <div style="overflow:auto;">
+          <div class="register-button-grp">
+            <button type="button" class="waves-effect waves-light btn akads-light-blue akads-blue-text" id="previous" onclick="nextPrev(-1)">Back</button>
+            <button type="button" class="waves-effect waves-light btn akads-blue" id="next" onclick="nextPrev(1)">Next</button>
+          </div>
+        </div>
+    </form>
+  </div>
+
+  <script>
+    var current = 0;
+    showTab(current);
+
+    function showTab(tabValue) {
+      var tabNum = document.getElementsByClassName("tab");
+      tabNum[tabValue].style.display = "block";
+
+      if(tabValue == 0){
+        document.getElementById("previous").style.display = "none";
+      } else {
+        document.getElementById("previous").style.display = "inline-block";
+      }
+
+      if(tabValue == (tabNum.length - 1)){
+        document.getElementById("next").innerHTML = "Submit";
+      } else{
+        document.getElementById("next").innerHTML = "Next";
+      }
+    }
+
+    function nextPrev(buttonValue) {
+      var tabNum = document.getElementsByClassName("tab");
+      if((buttonValue == 1) && (!validateForm())){
+        return false;
+      }
+
+      tabNum[current].style.display = "none";
+
+      current = current + buttonValue;
+
+      if(current >= (tabNum.length)){
+        document.getElementById("next").type = "Submit";
+      }
+
+      showTab(current);
+    }
+
+    function validateForm() {
+      var tabNum = document.getElementsByClassName("tab");
+      var inputValid = tabNum[current].getElementsByTagName("input");
+      var count, isValid = true;
+
+      for(count = 0; count < inputValid.length; count++){
+        if(inputValid[count].value == "" ){ //can add other conditions here
+          inputValid[count] += "invalid";
+
+          isValid = false;
+        }
+      }
+
+      return isValid;
+    }
+  </script>
+{% endblock content %}

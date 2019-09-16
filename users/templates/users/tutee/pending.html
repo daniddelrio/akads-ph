@@ -1,0 +1,36 @@
+{% extends "../base.html"%}
+
+{% block body %}
+<body>
+{% endblock %}
+
+{%block content%}
+  <div>
+    <h4 class="akads-dark-blue-text">Pending</h4>
+    <div class="container pending">
+      {% if session_group %}
+      {% for individual_session in session_group %}
+
+        <div class="card-panel pending akads-light-blue">
+          <div class="row">
+            <div class="col s8">
+              <div class="akads-dark-blue-text" id="pending-text"><strong>Date:</strong> {{individual_session.session_date}}</div>
+              <div class="akads-dark-blue-text" id="pending-text"><strong>Time:</strong> {{individual_session.time_start}} - {{individual_session.time_end}}</div>
+              <div class="akads-dark-blue-text" id="pending-text"><strong>Subject:</strong> Grade {{individual_session.grade}} {{individual_session.subject}}</div>
+            </div>
+            <div class="col s4">
+              <div class="akads-dark-blue-text" ><strong>Location: </strong>{{individual_session.location}}</div>
+              <a class="btn waves-effect waves-light" id="btn-cancel" href="pending/{{individual_session.id}}/cancel">CANCEL</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+      {% else %}
+        <p class="akads-mid-blue-text">Upcoming sessions will be listed here</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock content %}
+
+
+

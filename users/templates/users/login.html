@@ -1,0 +1,30 @@
+{% extends "./base.html"%}
+
+{% block body %}
+<body>
+{% endblock %}
+
+{%block content%}
+    <div class = 'container login'>
+      <form method = "POST">
+        {% csrf_token %}
+        <div class="card-panel">
+          <h4 class="akads-dark-blue-text">Log In</h4>
+          <div class="form-group input-field">
+            <input id="username" type="text" name="username" class="validate">
+            <label for="username">Username</label>
+          </div>
+          <div class="form-group input-field">
+            <input id="password" type="password" name="password" class="validate">
+            <label for="password">Password</label>
+          </div>
+          <div class="register-button-grp">
+            <button class = "btn akads-blue" type="submit">Log in</button>
+          </div>
+          <div>
+            <small class="text-muted">No account yet? <a class="ml-2" href="{% url 'register' %}">Sign up here</a> </small>
+          </div>
+        </div>
+      </form>
+    </div>
+{% endblock content %}

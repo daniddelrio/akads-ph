@@ -1,0 +1,44 @@
+{% extends "../base.html"%}
+
+{% block body %}
+<body>
+{% endblock %}
+
+{%block content%}
+  <div class="container user history">
+    <h4 class="akads-dark-blue-text">Session History</h4>
+
+    {% if session_group %}
+    {% for individual_session in session_group %}
+      <div class='card-panel history akads-light-blue'>
+        <div class="row">
+          <div class="col s4">
+              <ul class="left-align">
+                <li class="akads-dark-blue-text">
+                  <div class="valign-wrapper">
+                  <i class="medium material-icons akads-mid-blue-text">account_circle</i>
+                  <strong>Tutee:</strong> {{individual_session.user.first_name}}
+                  </div>
+                </li>
+              </ul>
+          </div>
+          <div class="col s4">
+              <ul class="left-align">
+                <li class="akads-dark-blue-text"><strong>Date:</strong> {{individual_session.session_date}}</li>
+              </ul>
+          </div>
+          <div class="col s4">
+              <ul class="left-align">
+                <li class="akads-dark-blue-text"><strong>Time:</strong> {{individual_session.time_start}} - {{individual_session.time_end}}</li>
+                <li class="akads-dark-blue-text"><strong>Subject:</strong> Grade {{individual_session.grade}} {{individual_session.subject}}</li>
+                <li class="akads-dark-blue-text"><strong>Location:</strong> {{individual_session.location}}</li>
+              </ul>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+    {% else %}
+      <p class="akads-mid-blue-text">Finished sessions will be listed here</p>
+    {% endif %}
+  </div>
+{% endblock content %}

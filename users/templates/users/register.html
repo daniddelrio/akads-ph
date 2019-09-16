@@ -1,0 +1,15 @@
+{% extends "./base.html"%}
+{%block content%}
+    <div class = 'container login'>
+      <div class="card-panel">
+        <h4 class="akads-dark-blue-text">Register</h4>
+        <div class="register-button-grp">
+          <a class = "btn akads-dark-blue" href="{% url 'register-tutee' %}">As Tutee</a>
+          <a class = "btn akads-blue" href="{% url 'register-tutor' %}">As Tutor</a>
+        </div>
+        <div class="border-top pt-3">
+          <small class="text-muted">Already have an account? <a class="ml-2" href="{% url 'login' %}">Log In</a> </small>
+        </div>
+      </div>
+    </div>
+{% endblock content %}

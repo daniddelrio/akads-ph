@@ -1,0 +1,74 @@
+{% extends "./base.html"%}
+
+{% block body %}
+<body>
+{% endblock %}
+
+{%block content%}
+  <div class="container login">
+    <div class = 'content-section'>
+      <form method = "POST">
+        {% csrf_token %}
+        <div class="card-panel">
+          <h4 class="akads-dark-blue-text">Edit Account</h4>
+          <div class="form-group input-field">
+            <input id="edit_card_number" type="text" name="cardnum">
+            <label for="edit_card_number">Card Number</label>
+          </div>
+          <div class="form-group input-field">
+            <input id="edit_fullname" type="text" name="fullname">
+            <label for="edit_fullname">Full Name</label>
+          </div>
+          <div class="form-group input-field">
+            <select type="text" name="expiry_date">
+              <option value="01/2020">01/2020</option>
+              <option value="02/2020">02/2020</option>
+              <option value="03/2020">03/2020</option>
+              <option value="04/2020">04/2020</option>
+              <option value="05/2020">05/2020</option>
+              <option value="06/2020">06/2020</option>
+              <option value="07/2020">07/2020</option>
+              <option value="08/2020">08/2020</option>
+              <option value="09/2020">09/2020</option>
+              <option value="10/2020">10/2020</option>
+              <option value="11/2020">11/2020</option>
+              <option value="12/2020">12/2020</option>
+              <option value="01/2021">01/2021</option>
+              <option value="02/2021">02/2021</option>
+              <option value="03/2021">03/2021</option>
+              <option value="04/2021">04/2021</option>
+              <option value="05/2021">05/2021</option>
+              <option value="06/2021">06/2021</option>
+              <option value="07/2021">07/2021</option>
+              <option value="08/2021">08/2021</option>
+              <option value="09/2021">09/2021</option>
+              <option value="10/2021">10/2021</option>
+              <option value="11/2021">11/2021</option>
+              <option value="12/2021">12/2021</option>
+              <option value="01/2022">01/2022</option>
+              <option value="02/2022">02/2022</option>
+              <option value="03/2022">03/2022</option>
+              <option value="04/2022">04/2022</option>
+              <option value="05/2022">05/2022</option>
+              <option value="06/2022">06/2022</option>
+              <option value="07/2022">07/2022</option>
+              <option value="08/2022">08/2022</option>
+              <option value="09/2022">09/2022</option>
+              <option value="10/2022">10/2022</option>
+              <option value="11/2022">11/2022</option>
+              <option value="12/2022">12/2022</option>
+            </select>
+            <label>Expiry Date:</label>
+          </div>
+          <div class="form-group input-field">
+            <input id="edit_seccode" type="text" name="seccode">
+            <label for="edit_seccode">Security Code</label>
+          </div>
+          <div class="form-group">
+            <button class = "btn akads-blue" type="submit">Edit</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock content %}

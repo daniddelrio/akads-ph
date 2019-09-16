@@ -1,0 +1,113 @@
+{% extends "./base.html"%}
+
+{% block body %}
+<body>
+{% endblock %}
+
+{%block content%}
+  <div class="container user profile">
+    <h4 class="akads-dark-blue-text">Profile Settings</h4>
+    <div id="settings-main" class="valign-wrapper">
+      <i id="settings-pic" class="large material-icons akads-mid-blue-text">account_circle</i>
+      <h5 id="settings-name" class="akads-dark-blue-text">{{ current_user.user.first_name }} {{ current_user.user.last_name }}</h5>
+    </div>
+    <div class="card-panel akads-light-blue settings">
+      <div class="row left-align valign-wrapper">
+        <div class="col s2">
+          <p class="akads-dark-blue-text valign-wrapper"><i class="small material-icons">account_box</i></p>
+        </div>
+        <div class="col s4">
+          <p class="akads-dark-blue-text"><strong>Username:</strong></p>
+        </div>
+        <div class="col s6">
+          <p class="akads-mid-blue-text">{{ current_user.user.username }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-panel akads-light-blue settings">
+      <div class="row left-align valign-wrapper">
+        <div class="col s2">
+          <p class="akads-dark-blue-text valign-wrapper"><i class="small material-icons">email</i></p>
+        </div>
+        <div class="col s4">
+          <p class="akads-dark-blue-text"><strong>Account:</strong></p>
+        </div>
+        <div class="col s6">
+          <p class="akads-mid-blue-text">{{ current_user.user.email }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-panel akads-light-blue settings">
+      <div class="row left-align valign-wrapper">
+        <div class="col s2">
+          <p class="akads-dark-blue-text valign-wrapper"><i class="small material-icons">lock</i></p>
+        </div>
+        <div class="col s4">
+          <p class="akads-dark-blue-text"><strong>Password:</strong></p>
+        </div>
+        <div class="col s3">
+          <p class="akads-mid-blue-text">**********</p>
+        </div>
+        <div class="col s3">
+          <a class = "waves-effect waves-light btn-small akads-mid-blue" href="/home/profile/password">Edit</a>
+        </div>
+      </div>
+    </div>
+    <!-- Password: {{ current_user.user.password }}<br> -->
+    {% if current_user.user.is_tutee %}
+      <div class="card-panel akads-light-blue settings">
+        <div class="row left-align valign-wrapper">
+          <div class="col s2">
+            <p class="akads-dark-blue-text valign-wrapper"><i class="small material-icons">location_on</i></p>
+          </div>
+          <div class="col s4">
+            <p class="akads-dark-blue-text"><strong>Address:</strong></p>
+          </div>
+          <div class="col s3">
+            <p class="akads-mid-blue-text">{{ current_user.housenum }}, {{ current_user.barangay }}, {{ current_user.city }}, {{ current_user.province }}</p>
+          </div>
+          <div class="col s3">
+            <a class = "waves-effect waves-light btn-small akads-mid-blue" href="/home/profile/location">Edit</a>
+          </div>
+        </div>
+      </div>
+      <div class="card-panel akads-light-blue settings">
+        <div class="row left-align valign-wrapper">
+          <div class="col s2">
+            <p class="akads-dark-blue-text valign-wrapper"><i class="small material-icons">attach_money</i></p>
+          </div>
+          <div class="col s4">
+            <p class="akads-dark-blue-text"><strong>Bank Account:</strong></p>
+          </div>
+          <div class="col s3">
+            <p class="akads-mid-blue-text">{{ current_user.cardnum }} {{ current_user.seccode }}</p>
+          </div>
+          <div class="col s3">
+            <a class = "waves-effect waves-light btn-small akads-mid-blue" href="/home/profile/card">Edit</a>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="card-panel akads-light-blue settings">
+        <div class="row left-align valign-wrapper">
+          <div class="col s2">
+            <p class="akads-dark-blue-text valign-wrapper"><i class="small material-icons">location_on</i></p>
+          </div>
+          <div class="col s4">
+            <p class="akads-dark-blue-text"><strong>Teaching Location/s:</strong></p>
+          </div>
+          <div class="col s3">
+            <p class="akads-mid-blue-text">
+            {% for x in location_user %}
+              {{ x.location }}
+            {% endfor %}
+            </p>
+          </div>
+          <div class="col s3">
+            <a class = "waves-effect waves-light btn-small akads-mid-blue" href="/home/profile/location">Edit</a>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock content %}

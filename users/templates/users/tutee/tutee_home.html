@@ -1,0 +1,153 @@
+{% extends "../base.html"%}
+
+{% block body %}
+<body>
+{% endblock %}
+
+{%block content%}
+  {% load static %}
+  <div class='container user book' id='map-check' stat='tutee'>
+    <h4 class="akads-dark-blue-text">Book a Tutor</h4>
+    <form method="POST">
+    {% csrf_token %}
+        <div class="row">
+          <div class="col s4">
+            <div class="form-group" id="grade-and-subject">
+              <h5 class="akads-mid-blue-text">Choose a Subject</h5>
+              <div class="card-panel subject">
+                <div class="input-field">
+                  <div class="form-group" id="form-grade">
+                    <select name="grade">
+                      <option value="" disabled selected>Grade level</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                      <option value="11">11</option>
+                      <option value="12">12</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="input-field">
+                  <div class="form-group" id="form-subject">
+                    <select name="subject">
+                        <option value="" disabled selected>Subject</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="Filipino">Filipino</option>
+                        <option value="Science">Science</option>
+                        <option value="Araling Panlipunan / Social Studies">Araling Panlipunan / Social Studies</option>
+                        <option value="English">English</option>
+                        <option value="Chinese">Chinese</option>
+                        <option value="Religion">Religion</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <img src="{% static 'users/img/bookstack.svg' %}" alt="" width ="200" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col s4">
+            <h5 class="akads-mid-blue-text">Enter Schedule</h5>
+            <div class="form-group" id="date-and-time">
+              <div class="card-panel">
+                <div>
+                  <label>Select Date</label>
+                  <!-- <div class="form-group" id="form-date">
+                    <input type="text" name="date" class="datepicker">
+                  </div> -->
+                  <div id="book-date" type="text"
+                    class="datepicker-here"
+                    data-language='en'
+                    data-multiple-dates="true"
+                    data-multiple-dates-separator=","></div>
+                  <input id="hidden-date" class="hidden" type="text" name="date">
+                </div>
+                <div id="book-time">
+                  <div class="row" id="book-time-select">
+                    <div class="col s6">
+                      <label>Starting Time</label>
+                      <div class="form-group" id="form-starting-time">
+                        <input id="start" type="text" name="start_time" class="timepicker">
+                        <input id="hidden-time" class="hidden" type="text" name="end_time">
+                      </div>
+                    </div>
+                    <div class="col s6">
+                      <label>Number of hours</label>
+                      <div class="form-group">
+                        <input id="hours" type="text" name="hours">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col s4">
+            <h5 class="akads-mid-blue-text">Select Location</h5>
+            <div class="card-panel">
+                <div class="form-group sex">
+                    <label for="male">
+                      <input id="male" value="{{ current_user.city }}" name="location" type="radio">
+                      <span>Use home address</span>
+                    </label>
+                    <br>
+                    <p>or</p>
+                    <label for="female">
+                        <input id="female" value="" name="location" type="radio">
+                        <span>Use specific address</span>
+                    </label>
+                  </div>
+              <div class="map" id="tutee-map">
+                <div id="map" location=""></div>
+              </div>
+              <div class="input-field" id="select-location-map">
+                <div class="form-group" id="form-location">
+                  <select id="location-select-book" name="location" data-target="Metro Manila">
+                    <option value="Metro Manila" disabled selected>Choose city</option>
+                    <option id="test" value="Manila">Manila</option>
+                    <option id="test" value="Quezon City">Quezon City</option>
+                    <option id="test" value="Caloocan">Caloocan</option>
+                    <option id="test" value="Las Piñas">Las Piñas</option>
+                    <option id="test" value="Makati">Makati</option>
+                    <option id="test" value="Malabon">Malabon</option>
+                    <option id="test" value="Mandaluyong">Mandaluyong</option>
+                    <option id="test" value="Marikina">Marikina</option>
+                    <option id="test" value="Muntinlupa">Muntinlupa</option>
+                    <option id="test" value="Navotas">Navotas</option>
+                    <option id="test" value="Parañaque">Parañaque</option>
+                    <option id="test" value="Pasay">Pasay</option>
+                    <option id="test" value="Pasig">Pasig</option>
+                    <option id="test" value="San Juan Metro Manila">San Juan</option>
+                    <option id="test" value="Taguig">Taguig</option>
+                    <option id="test" value="Valenzuela">Valenzuela</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group input-field">
+                <input id="housenum" type="text" name="housenum" class="validate">
+                <label for="housenum">House Number, Building, and Street Name:</label>
+              </div>
+              <div class="form-group input-field">
+                <input id="province" type="text" name="province" class="validate">
+                <label for="province">Province:</label>
+              </div>
+              <div class="form-group input-field">
+                <input id="barangay" type="text" name="barangay" class="validate">
+                <label for="barangay">Barangay:</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class = "btn akads-blue waves-effect waves-light" type="submit">Book</button>
+    </form>
+  </div>
+
+{% endblock content %}

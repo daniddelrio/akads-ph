@@ -1,0 +1,429 @@
+.alert.container {
+  text-align: center;
+  padding-top: 10px;
+}
+
+.logo {
+  height: 64px;
+  padding-right: 20px;
+}
+
+nav {
+  padding: 0px 50px 0px 50px;
+}
+
+nav .dropdown-content a {
+  font-size: 12px;
+  text-align: center;
+}
+
+body {
+  min-height: 100vh;
+  font-family: 'Lato', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.tab {
+  display: none;
+  text-align: center;
+}
+
+.content {
+  text-align: center;
+  flex: 1 0 auto;
+}
+
+.get-started {
+  margin-top: 15px;
+}
+
+.page-footer {
+  padding-top: 0px;
+}
+
+.copyright {
+  padding-top: 6px !important;
+}
+
+.landing-wrapper-1 {
+  padding: 100px 0 70px 0;
+}
+
+.landing-wrapper-2 {
+  padding: 50px 100px 80px 100px;
+  background-color: white;
+  margin: 0;
+}
+
+.landing-wrapper-2 .title {
+  font-size: 1.1rem;
+  font-weight: bolder;
+  margin: 0.5em;
+  margin-top: 1em;
+}
+
+.landing-wrapper-2 .desc {
+  font-size: 0.9rem;
+  margin: 0.5em;
+}
+
+.landing-image {
+  height: 120px;
+}
+
+/* .container.edit-location {
+  
+} */
+
+.container.login {
+  width: 33vw;
+  min-width: 300px;
+  padding: 50px 0 100px 0;
+}
+
+.container.login .card-panel {
+  padding: 20px 50px 50px;
+}
+
+.container.register {
+  max-width: 70vw;
+  padding: 50px 0 100px 0;
+}
+
+.container.register .wrapper {
+  width: 500px;
+  display: inline-block;
+  padding-top: 20px;
+}
+
+.container.register h4 {
+  padding-bottom: 1.75rem;
+}
+
+.register-button-grp {
+  padding: 20px 0 5px 0;
+}
+
+.register-button-grp .btn {
+  margin: 0 5px 0 5px;
+}
+
+.form-group.sex {
+  margin: 1rem 0 2rem 0;
+}
+
+.sex-label {
+  font-size: 1.1rem;
+  padding-right: 10px;
+}
+
+.input-field.bio {
+  margin-top: 2rem;
+}
+
+ul.requirements {
+  text-align: left;
+}
+
+ul.requirements li {
+  font-size: 1.1rem;
+}
+
+.container.user {
+  padding: 20px 0 100px 0;
+}
+
+.container.user.book {
+  width: 90%;
+}
+
+.container.user.history {
+  width: 50%;
+}
+
+.container.user.profile {
+  width: 35%;
+  text-align: center;
+}
+
+.container.pending {
+  width: 40%;
+  padding-bottom: 100px;
+}
+
+.card-panel.credits-left {
+  margin: 0 auto;
+  height: 400px;
+  width: 80%;
+}
+
+
+.card-panel.credits-left h5 {
+  margin: 10px;
+}
+
+.card-panel.credits-left h6 {
+  margin: 10px;
+}
+
+.card-panel.credits-right {
+  margin: 0 auto;
+  min-height: 400px;
+  width: 80%;
+  overflow-y: auto;
+}
+
+.card-panel.requests {
+  margin: 1rem;
+  padding: 1rem;
+  font-size: 13px;
+}
+
+.card-panel.requests li {
+  margin: 5px;
+}
+
+.card-panel.settings {
+  margin: 1rem;
+  padding: 5px;
+  font-size: 14px;
+}
+
+.card-panel.settings .row {
+  margin: 0;
+}
+
+.card-panel.settings .row p {
+  margin: 5px 0;
+}
+
+strong {
+  font-weight: bold;
+}
+
+.card-panel.upcoming {
+  margin-top: 30px;
+}
+
+.card-panel.upcoming .valign-wrapper {
+  padding-bottom: 10px;
+}
+
+.card-panel.upcoming ul {
+  margin-top: 0;
+}
+
+.card-panel.upcoming h5 {
+  margin: 0;
+}
+
+.card-panel.upcoming i {
+  padding: 0 10px 0 0;
+}
+
+.card-panel.pending {
+  margin-top: 30px;
+}
+
+.card-panel.history i {
+  padding: 0 10px 0 0;
+}
+
+#tutee-map {
+  height: 300px;
+}
+
+.map {
+  height: 350px;
+}
+
+#map {
+  height: 100%;
+  width: 100%
+}
+
+#map1 {
+  height: 100%;
+  width: 100%
+}
+
+#map2 {
+  height: 100%;
+  width: 100%
+}
+
+#map3 {
+  height: 100%;
+  width: 100%
+}
+
+#map4 {
+  height: 100%;
+  width: 100%
+}
+
+#map5 {
+  height: 100%;
+  width: 100%
+}
+
+#map6 {
+  height: 100%;
+  width: 100%
+}
+
+#map7 {
+  height: 100%;
+  width: 100%
+}
+
+#map8 {
+  height: 100%;
+  width: 100%
+}
+
+#map9 {
+  height: 100%;
+  width: 100%
+}
+
+#map10 {
+  height: 100%;
+  width: 100%
+}
+
+#map11 {
+  height: 100%;
+  width: 100%
+}
+
+#map12 {
+  height: 100%;
+  width: 100%
+}
+
+#map13 {
+  height: 100%;
+  width: 100%
+}
+
+#map14 {
+  height: 100%;
+  width: 100%
+}
+
+#map15 {
+  height: 100%;
+  width: 100%
+}
+
+#map16 {
+  height: 100%;
+  width: 100%
+}
+
+#map17 {
+  height: 100%;
+  width: 100%
+}
+
+#map18 {
+  height: 100%;
+  width: 100%
+}
+
+#map19 {
+  height: 100%;
+  width: 100%
+}
+
+#map20 {
+  height: 100%;
+  width: 100%
+}
+
+#tutee-map {
+  padding-bottom: 10px;
+}
+
+#book-time-select {
+  padding-top: 20px;
+}
+
+.card-panel.subject { 
+  padding-right: 90px;
+  padding-left: 90px;
+}
+
+.card-panel.settings .btn-small {
+  margin-bottom: 3px;
+}
+
+#settings-pic {
+  font-size: 8rem;
+}
+
+#settings-main {
+  display: inline-flex;
+}
+
+#settings-name {
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
+.modal {
+  text-align: center;
+}
+
+.modal h5 {
+  margin-top: 30px;
+}
+
+.end-sesh {
+  min-height: 540px;
+}
+
+span.badge {
+  min-width: 0;
+}
+
+#upc-badge {
+  display: inline;
+}
+
+#calendar-panel {
+  padding: 10px;
+}
+
+.hidden {
+  display: none;
+}
+
+#pending-text {
+  padding: 5px;
+}
+
+#btn-cancel {
+  background: red;
+  margin-top:40px;
+}
+
+.datepicker {
+  width: inherit !important;
+}
+
+nav.datepicker--nav {
+  width: inherit;
+  height: 25px;
+  background-color: #0072bf;
+}
+
+.datepicker--nav-title i {
+  font-size: inherit !important;
+  color: #f1f9ff !important;
+}
+#btn-redeem-credits {
+  margin-top: 80px;
+}

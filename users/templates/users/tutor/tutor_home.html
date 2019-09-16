@@ -1,0 +1,82 @@
+{% extends "../base.html"%}
+
+{% block body %}
+<body>
+{% endblock %}
+
+{%block content%}
+{% load static %}
+  <div class="container user">
+    <div class="row">
+      <div class="col s8">
+        <div class="card-panel"> <!-- requests card -->
+          <h5 class="akads-dark-blue-text">Look For Tutees</h5>
+          {% if session_group %}
+            {% for individual_session in session_group %}
+              <div class='card-panel row requests akads-light-blue'>
+                <div class="col s6">
+                  <ul class="left-align">
+                    <li class="akads-dark-blue-text"><strong>Date:</strong>
+                      {% comment %} {{individual_session.session.session_date}}, {% endcomment %}
+                     {% for individual_2_session in individual_session.sessions %}
+                      {{individual_2_session.session_date}},
+                     {% endfor %}
+                    </li>
+                    <li class="akads-dark-blue-text"><strong>Time:</strong> {{individual_session.session.time_start}} - {{individual_session.session.time_end}}</li>
+                    <li class="akads-dark-blue-text"><strong>Subject:</strong> Grade {{individual_session.session.grade}} {{individual_session.session.subject}}</li>
+                  </ul>
+                </div>
+                <div class="col s6">
+                  <ul class="left-align">
+                    <li class="akads-dark-blue-text"><strong>Location:</strong> {{individual_session.session.location}}</li>
+                    <li class="akads-dark-blue-text"><strong>Tutee:</strong> {{individual_session.session.user.first_name}}</li>
+                  </ul>
+                  <div class="requests-button-grp right-align">
+                    <a class="btn-small waves-effect waves-light green" href="{{individual_session.session.id}}/accepted">ACCEPT</a>
+                    <a class="btn-small waves-effect waves-light red modal-trigger" href="#modal2">DECLINE</a>
+                    <div id="modal2" class="modal">
+                      <div class="modal-content container">
+                        <img class="logo" src="{% static 'users/img/akads-nav-logo.png' %}">
+                        <h5 class="akads-blue-text">Are you sure you want to decline?</h5>
+                        <p class="akads-mid-blue-text">This will delete the request from the board permanently</p>
+                      </div>
+                      <div class="modal-footer">
+                        <a href="#!" class="modal-close waves-effect waves-light btn-small akads-light-blue akads-dark-blue-text">Close</a>
+                        <a href="{{individual_session.session.id}}/delete" class="modal-close waves-effect waves-light btn-small red">Delete</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <p class="akads-mid-blue-text">Tutor requests will be listed here</p>
+          {% endif %}
+        </div>
+      </div>
+      <div class="col s4">
+        <div class="card-panel"> <!-- redeem card -->
+          <form method="POST">
+          {% csrf_token %}
+            <h5 class="akads-dark-blue-text">Just completed a session?</h5>
+            <p class="akads-mid-blue-text">Input the code given by your tutee to verify and get your credits!</p>
+            <div class="form-group input-field">
+              <input id="code" type="text" name="code">
+              <label for="code">Input Here</label>
+            </div>
+            <span>
+              <button type="submit" class="waves-effect waves-light btn akads-dark-blue" id="redeem">Redeem</button>
+            </span>
+          </form>
+        </div>
+        <div id="calendar-panel" class="card-panel"> <!-- calendar card -->
+          <div id="calendar"></div>
+        </div>
+        <div>
+        <input id="hidden-event" class="hidden" type="text" name="event"
+        value="{% for sess in sessions_acc %}{{sess.session.session_date}}|{{sess.tutee.first_name}} {{sess.tutee.last_name}}|Grade {{sess.session.grade}} {{sess.session.subject}}&{% endfor %}">
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

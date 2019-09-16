@@ -1,0 +1,34 @@
+{% extends "./base.html" %}
+
+{% block body %}
+<body class="akads-light-blue">
+{% endblock %}
+
+{% block content %}
+{% load static %}
+<div class="landing-wrapper-1">
+  <h2 class="akads-dark-blue-text center-align">Let's get you that perfect tutor.</h2>
+  {% if user.is_authenticated %}
+  <a href="{% url 'booking' %}" class="btn-large akads-blue get-started">Get Started</a>
+  {% else %}
+  <a href="{% url 'booking' %}" class="btn-large akads-blue get-started">Get Started</a>
+  {% endif %}
+</div>
+<div class="row landing-wrapper-2">
+  <div class="col s4">
+    <img class="landing-image" src="{% static 'users/img/placeholder.svg' %}">
+    <p class="title akads-dark-blue-text">Select Location</p>
+    <p class="desc akads-blue-text">Be tutored at home or in a selected location.</p>
+  </div>
+  <div class="col s4">
+    <img class="landing-image" src="{% static 'users/img/bookstack.svg' %}">
+    <p class="title akads-dark-blue-text">Choose Subject</p>
+    <p class="desc akads-blue-text">Learn Math, English, Filipino, and others.</p>
+  </div>
+  <div class="col s4">
+    <img class="landing-image" src="{% static 'users/img/calendar.svg' %}">
+    <p class="title akads-dark-blue-text">Enter Schedule</p>
+    <p class="desc akads-blue-text">Place your desired schedule and session duration.</p>
+  </div>
+</div>
+{% endblock content %}

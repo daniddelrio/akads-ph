@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ title }}</title>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Font -->
+    <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+    <!--- Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'users/css/materialize.css' %}" media="screen,projection">
+    <link rel="stylesheet" type="text/css" href="{% static 'users/css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'users/css/simple-calendar.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'users/css/datepicker.css' %}">
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  </head>
+  
+  {% block body %} <!-- for body color -->
+  {% endblock %}
+
+    <ul id="dropdown1" class="dropdown-content">
+      {% if sessions_acc|length > 0 %}
+      <li><a class="akads-dark-blue-text" href="{% url 'upcoming' %}">UPCOMING<span id="upc-badge" class="badge">{{ sessions_acc|length }}</span></a></li>
+      {% else %}
+      <li><a class="akads-dark-blue-text" href="{% url 'upcoming' %}">UPCOMING</a></li>
+      {% endif %}
+      {% if user.is_tutee %}
+      <li><a class="akads-dark-blue-text" href="{% url 'pending' %}">PENDING</a></li>
+      {% endif %}
+      <li><a class="akads-dark-blue-text" href="{% url 'history' %}">HISTORY</a></li>
+    </ul>
+
+    <nav class="white">
+      <div class="nav-wrapper">
+        {% if user.is_authenticated %}
+        <a href="{% url 'home' %}" class="left">
+        {% else %}
+        <a href="{% url 'landing' %}" class="left">
+        {% endif %}
+          <img class="logo" src="{% static 'users/img/akads-nav-logo.png' %}">
+        </a>
+        {% if user.is_authenticated %}
+          {% if user.is_tutee %}
+            <ul id="nav-mobile" class="left hide-on-med-and-down">
+              <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'home' %}">HOME</a></li>
+              {% if sessions_acc|length > 0 %}
+              <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS<span class="new badge akads-blue" data-badge-caption="">{{ sessions_acc|length }}</span></a></li>
+              {% else %}
+              <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS</a></li>
+              {% endif %}
+              <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'credits' %}">CREDITS</a></li>
+              <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'profile' %}">SETTINGS</a></li>
+              <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'logout' %}">SIGN OUT</a></li>
+            </ul>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+              <li><a class="akads-dark-blue-text nav-item nav-link">CREDITS: {{credit_user.credits}}</a></li>
+              <li><a class="btn akads-blue waves-effect waves-light" href="{% url 'credits' %}">TOP UP</a></li>
+            </ul>
+          {% else %}
+            <ul id="nav-mobile" class="left hide-on-med-and-down">
+              <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'home' %}">HOME</a></li>
+              {% if sessions_acc|length > 0 %}
+              <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS<span class="new badge akads-blue" data-badge-caption="">{{ sessions_acc|length }}</span></a></li>
+              {% else %}
+              <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS</a></li>
+              {% endif %}
+              <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'profile' %}">SETTINGS</a></li>
+              <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'logout' %}">SIGN OUT</a></li>
+            </ul>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+              <li><a class="akads-dark-blue-text nav-item nav-link">CREDITS: {{credit_user.credits}}</a></li>
+              <li><a class="btn akads-blue waves-effect waves-light" href="{% url 'credits' %}">REDEEM</a></li>
+            </ul>
+          {% endif %}
+        {% else %}
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li><a class="btn akads-dark-blue waves-effect waves-light" href="{% url 'login' %}">SIGN IN</a></li>
+          <li><a class="btn akads-dark-blue waves-effect waves-light" href="{% url 'register' %}">REGISTER</a></li>
+        {% endif %}
+        </ul>
+      </div>
+    </nav>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div id="modal1" class="modal alert alert-{{ message.tags }}">
+          <div class="modal-content container">
+            <img class="logo" src="{% static 'users/img/akads-nav-logo.png' %}">
+            <h5 class="akads-blue-text">{{ message }}</h5>
+          </div>
+          <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">OK</a>
+          </div>
+        </div>
+        <!-- <div class="alert alert-{{ message.tags }} container red-text">
+          {{ message }}
+        </div> -->
+      {% endfor %}
+    {% endif %}
+
+    <div class="content">
+    {% block content %} <!-- template content goes here -->
+    {%endblock%}
+    </div>
+
+    <footer class="page-footer akads-blue">
+      <div class="footer-copyright">
+        <div class="container">
+          <div class="left valign-wrapper">
+            Powered by&nbsp;&ensp;
+            <a href="http://up-csi.com">
+              <img src="{% static 'users/img/upcsi-logo.svg' %}" style="height: 55px; width: auto;">
+            </a>
+          </div>
+          <div class="right copyright" style="height: 60px;">
+              <div class="right-align">AKADS</div>
+              <div>All rights reserved. © 2019</div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    
+    
+    <script type="text/javascript" src="{% static 'users/js/jquery-3.4.1.js' %}"></script>
+    <script type="text/javascript" src="{% static 'users/js/script.js' %}"></script>
+    <script type="text/javascript" src="{% static 'users/js/materialize.js' %}"></script>
+    <script type="text/javascript" src="{% static 'users/js/jquery.simple-calendar.js' %}"></script>
+    <script type="text/javascript" src="{% static 'users/js/datepicker.js' %}"></script>
+    <script type="text/javascript" src="{% static 'users/js/datepicker.en.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBpUPxddlvEtS4epVtpNTl3Pj4TDForcF0&callback=initMap"
+    async defer></script>
+  </body>
+</html>
