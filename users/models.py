@@ -78,7 +78,7 @@ class Sessions_Ended(models.Model):
     grade = models.IntegerField()
     subject = models.CharField(max_length=20)
     time_start = models.TimeField()
-    time_end = models.TimeField()
+    time_end = models.TimeField(blank=True, null=True)
     session_date = models.DateField()
     location = models.CharField(max_length=50)
     tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "tutor2")
