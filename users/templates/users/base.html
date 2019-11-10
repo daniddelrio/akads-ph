@@ -27,6 +27,11 @@
       {% else %}
       <li><a class="akads-dark-blue-text" href="{% url 'upcoming' %}">UPCOMING</a></li>
       {% endif %}
+      {% if sessions_ongoing|length > 0 %}
+      <li><a class="akads-dark-blue-text" href="{% url 'ongoing' %}">ONGOING<span id="upc-badge" class="badge">{{ sessions_ongoing|length }}</span></a></li>
+      {% else %}
+      <li><a class="akads-dark-blue-text" href="{% url 'ongoing' %}">ONGOING</a></li>
+      {% endif %}
       {% if user.is_tutee %}
       <li><a class="akads-dark-blue-text" href="{% url 'pending' %}">PENDING</a></li>
       {% endif %}
@@ -63,7 +68,9 @@
             <ul id="nav-mobile" class="left hide-on-med-and-down">
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'home' %}">HOME</a></li>
               {% if sessions_acc|length > 0 %}
-              <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS<span class="new badge akads-blue" data-badge-caption="">{{ sessions_acc|length }}</span></a></li>
+              {% with sessions_ongoing|length as ongoing_length %}  
+              <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS<span class="new badge akads-blue" data-badge-caption="">{{ sessions_acc|length|add:ongoing_length }}</span></a></li>
+              {% endwith %}
               {% else %}
               <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS</a></li>
               {% endif %}
