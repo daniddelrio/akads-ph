@@ -237,11 +237,11 @@ def ongoing(request):
     user=request.user
     credit_user = User.objects.get(id=user.id)
     if(user.is_tutee==True):
-        sessions = sorted(Sessions_Accepted.objects.filter(tutee = user), key=lambda x : x.session.session_date)
-        sessions_ongoing = sorted(Sessions_Ended.objects.filter(user=user, time_end=None), key=lambda x : x.session.session_date)
+        sessions_acc = sorted(Sessions_Accepted.objects.filter(tutee = user), key=lambda x : x.session.session_date)
+        sessions_ongoing = sorted(Sessions_Ended.objects.filter(user=user, time_end=None), key=lambda x : x.session_date)
         return render(request, "users/tutee/ongoing_tutee.html", {'session_group':sessions_ongoing, 'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
     else:
-        sessions = sorted(Sessions_Accepted.objects.filter(tutor = user), key=lambda x : x.session.session_date)
+        sessions_acc = sorted(Sessions_Accepted.objects.filter(tutor = user), key=lambda x : x.session.session_date)
         sessions_ongoing = sorted(Sessions_Ended.objects.filter(tutor=user, time_end=None), key=lambda x : x.session_date)
         print(Sessions_Ended.objects.filter(tutor=user))
         count = 1
@@ -250,9 +250,9 @@ def ongoing(request):
             tutee_now = Tutee.objects.get(user=x.user).cellnum
 
         if(tutee_now is not None):
-            return render(request, "users/tutor/ongoing_tutor.html", {'session_group':sessions_ongoing, 'sessions_acc':sessions, 'credit_user':credit_user, 'cellnum':tutee_now, 'sessions_ongoing' : sessions_ongoing}, {'count':count})
+            return render(request, "users/tutor/ongoing_tutor.html", {'session_group':sessions_ongoing, 'sessions_acc':sessions_acc, 'credit_user':credit_user, 'cellnum':tutee_now, 'sessions_ongoing' : sessions_ongoing}, {'count':count})
         else:
-            return render(request, "users/tutor/ongoing_tutor.html", {'session_group':sessions_ongoing, 'sessions_acc':sessions, 'credit_user':credit_user, 'sessions_ongoing' : sessions_ongoing}, {'count':count})
+            return render(request, "users/tutor/ongoing_tutor.html", {'session_group':sessions_ongoing, 'sessions_acc':sessions_acc, 'credit_user':credit_user, 'sessions_ongoing' : sessions_ongoing}, {'count':count})
 
 @login_required
 def pending(request):
@@ -310,26 +310,39 @@ def delete_request(request, session_id):
 def end_session(request, session_id):
     user=request.user
     user.credits = user.credits - 500
+    sessions_acc = Sessions_Accepted.objects.filter(tutee = user)
+    sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user))
 
-    new_session = Sessions.objects.get(id=session_id)
-    done = Sessions_Accepted.objects.get(session=new_session)
+    # transaction = Transaction.objects.create(user=new_user, tutor=new_tutor, amount=500, credits=-500)
 
-    new_user = new_session.user
-    new_tutor = done.tutor
+    ended = Sessions_Ended.objects.filter(pk=session_id)
 
-    transaction = Transaction.objects.create(user=new_user, tutor=new_tutor, amount=500, credits=-500)
+    if not ended.exists():
+        print(message)
+        messages.error(request, 'Error: this session does not exist!')
+        return redirect('ongoing')
 
-    new_id = new_session.id
-    new_grade = new_session.grade
-    new_subject = new_session.subject
-    new_time_start = new_session.time_start
-    new_time_end = new_session.time_end
-    new_session_date = new_session.session_date
-    new_location = new_session.location
+    ended = ended.first()
+    if (request.method == 'POST'):
+        try:
+            # ============ CHANGE ONCE MAP IS BACK =============
+            # new_location = request.POST.get('location')
+            new_location = 'Test'
+            new_time_end = request.POST.get('end_time')
 
-    ended = Sessions_Ended.objects.create(session_id=new_id, user=new_user, grade=new_grade, subject=new_subject, time_start=new_time_start, time_end=new_time_end, session_date=new_session_date, location=new_location, tutor=new_tutor)
-    new_session.delete()
-    return redirect('upcoming')
+            messages.success(request, f'Session has ended!')
+
+            ended.time_end = new_time_end
+            ended.save()
+
+            return redirect('ongoing')
+        except Exception as ex:
+            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+            message = template.format(type(ex).__name__, ex.args)
+            print(message)
+            messages.error(request, 'Error: please input valid values for each field')
+
+    return render(request, "users/tutee/end_session.html", {'session' : ended, 'sessions_acc' : sessions_acc, 'sessions_ongoing': sessions_ongoing, 'credit_user': user})
 
 # In the POV of the TUTOR
 @login_required
