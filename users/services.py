@@ -15,10 +15,10 @@ def create_token(number, exp_month, exp_year, cvc):
     data = {
         'data' : {
             'attributes': {
-                'number': number,
+                'number': str(number),
                 'exp_month': exp_month,
                 'exp_year': exp_year,
-                'cvc': cvc,
+                'cvc': str(cvc),
                 'billing': {}
             }
         }
@@ -65,9 +65,8 @@ def get_amount_from_minutes(minutes):
     return amount
 
 # Minutes is the duration of the tutoring session
-def create_payment(token_id, minutes, tutor_name, date):
+def create_payment(token_id, amount, tutor_name, date):
     url = os.path.join(API_URL, 'payments')
-    amount = get_amount_from_minutes(minutes)
 
     data = {
         'data' : {

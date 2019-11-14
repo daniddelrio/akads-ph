@@ -1,0 +1,83 @@
+{% extends "./base.html"%}
+{% load payment_left %}
+
+{% block body %}
+<body>
+{% endblock %}
+
+{%block content%}
+  <h4 class="akads-dark-blue-text">Payments and Transactions</h4>
+  <div class="container">
+    <div class="row">
+      
+      <div class="col s6">
+        <div class="card-panel credits-left">
+          <h5 class="akads-dark-blue-text">Pending Payments</h5>
+          {% if pending_payments %}
+            <div>
+              <h5>Pending: PHP {{ pending_sum }}</h5>
+            </div>
+            {% for payment in pending_payments %}
+              <div class='content-section'>
+                <br>
+                <p>
+                  <h6>Your session with <b>{{ payment.session.tutor }}</b></h6>
+                  {{payment.session.session_date}}<br>
+                  {{payment.session.time_start}}-{{payment.session.time_end}}<br>
+                  Total Amount: {{ payment.amount }}<br>
+                  Amount left: {% payment_left user payment %}
+                </p>
+              </div>  
+            {% endfor %}
+            <a href="{% url 'pay_balance' %}" class="waves-effect waves-light btn akads-dark-blue" id="redeem">Pay</a>
+          {% else %}
+            <div>
+              <br>
+              <h5 class="akads-dark-blue-text">You have no pending payments!</h5>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col s6">
+        <div class="card-panel credits-right">
+          <h5 class="akads-dark-blue-text">Payments History</h5>
+          {% if completed_payments %}
+            {% for payment in completed_payments %}
+              <div class='content-section'>
+                <p>
+                  <h6>Your session with <b>{{ payment.session.tutor.get_full_name }}</b></h6>
+                  {{payment.session.session_date}}<br>
+                  {{payment.session.time_start}}-{{payment.session.time_end}}<br>
+                  Total Amount: {{ payment.amount }}<br>
+                </p>
+              </div> 
+            {% endfor %}
+          {% else %}
+            <br>
+            <h5>You haven't made any full payments yet!</h1>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+    <div class="card-panel credits-left" style="margin-bottom: 20px; height: 500px;">
+      <h5 class="akads-dark-blue-text">Transaction History</h5>
+      {% if transaction_group %}
+        {% for transaction in transaction_group %}
+         <div class='content-section'>
+           <p>
+            {{ transaction.payment }}<br>
+            Amount: {{ transaction.amount }}<br>
+            Paid at {{ transaction.created_at }}
+           </p>
+         </div> 
+        {% endfor %}
+      {% else %}
+        <br>
+        <h5>You haven't made any transactions yet!</h1>
+      {% endif %}
+    </div>
+  </div>
+
+{% endblock content %}

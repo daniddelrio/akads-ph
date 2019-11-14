@@ -91,8 +91,6 @@ class Sessions_Ended(models.Model):
     def minutes(self):
         if self.time_end:
             from datetime import timedelta
-            print(self.time_end)
-            print(type(self.time_end))
             time_start = timedelta(hours=self.time_start.hour, minutes=self.time_start.minute)
             time_end = timedelta(hours=self.time_end.hour, minutes=self.time_end.minute)
             duration = time_end - time_start
@@ -113,6 +111,9 @@ class Payment(models.Model):
     def __init__(self, *args, **kwargs):
         super(Payment, self).__init__(*args, **kwargs)
         self.__is_paid = self.is_paid
+
+    def __str__(self):
+        return self.session.tutor.first_name + ' ' + self.session.tutor.last_name + " - " + str(self.session.session_date)
 
     def save(self, *args, **kwargs):
         if self.is_paid and not self.__is_paid:

@@ -9,7 +9,7 @@ from django.utils.crypto import get_random_string
 from django.contrib.auth import update_session_auth_hash
 from django.db import transaction
 from django.db.models import Q, Sum
-from .services import get_amount_from_minutes
+from .services import *
 
 import datetime
 
@@ -339,10 +339,6 @@ def end_session(request, session_id):
             minutes = ended.minutes
             amount = get_amount_from_minutes(minutes)
 
-            print("miunutes AND AMOUNT")
-            print(minutes)
-            print(amount)
-
             if not Payment.objects.filter(session=ended).exists():
                 Payment.objects.create(tutee=user, session=ended, amount=amount)
 
@@ -455,18 +451,22 @@ def transactions(request):
     user = request.user
     if(not user.is_tutee):
         messages.error(request, 'Error: you cannot access this page.')
-        return redirect('index')
+        return redirect('landing')
 
     credit_user = User.objects.get(id=user.id)
     transaction_group = Transaction.objects.filter(user=user)
     pending_payments = Payment.objects.filter(tutee=user, is_paid=False)
     completed_payments = Payment.objects.filter(tutee=user, is_paid=True)
+
     sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user))
     sessions_acc = Sessions_Accepted.objects.filter(Q(tutee=user) | Q(tutor=user))
 
     # Get sum of pending payments
     pending_sum = pending_payments.aggregate(Sum('amount'))['amount__sum']
     pending_sum = 0 if pending_sum is None else pending_sum
+    amount_paid = transaction_group.filter(payment__is_paid=False).aggregate(Sum('amount'))['amount__sum']
+    amount_paid = 0 if amount_paid is None else amount_paid
+    pending_sum -= amount_paid
 
     return render(request, "users/transactions.html", {
         'credit_user':credit_user, 
@@ -478,9 +478,83 @@ def transactions(request):
         'pending_sum': pending_sum
     })
 
+@transaction.atomic
 @login_required
 def pay_balance(request):
-    pass
+    user = request.user
+    if(not user.is_tutee):
+        messages.error(request, 'Error: you cannot access this page.')
+        return redirect('landing')
+
+    credit_user = User.objects.get(id=user.id)
+    tutee = Tutee.objects.get(user=user)
+    transaction_group = Transaction.objects.filter(user=user)
+    pending_payments = Payment.objects.filter(tutee=user, is_paid=False)
+    sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user))
+    sessions_acc = Sessions_Accepted.objects.filter(Q(tutee=user) | Q(tutor=user))
+
+    # Get sum of pending payments
+    pending_sum = pending_payments.aggregate(Sum('amount'))['amount__sum']
+    pending_sum = 0 if pending_sum is None else pending_sum
+    amount_paid = transaction_group.filter(payment__is_paid=False).aggregate(Sum('amount'))['amount__sum']
+    amount_paid = 0 if amount_paid is None else amount_paid
+    pending_sum -= amount_paid
+
+    if(request.method == 'POST'):
+        try:
+            current_payment = pending_payments.first()
+            session = current_payment.session
+
+            card_number = int(request.POST.get('cardnum'))
+            full_name = request.POST.get('fullname')
+            exp_date = request.POST.get('expiry_date')
+            security_code = int(request.POST.get('seccode'))
+            amount = int(request.POST.get('amount'))
+
+            exp_arr = exp_date.split('/')
+            exp_month = int(exp_arr[0])
+            exp_year = int(exp_arr[1][2:])
+
+            tutor_name = session.tutor.first_name + ' ' + session.tutor.last_name
+
+            token = create_token(number=card_number, exp_month=exp_month, exp_year=exp_year, cvc=security_code)
+            if 'errors' in token and token['errors'][0]['status'] == '400':
+                messages.error(request, token['errors'][0]['detail'])
+                return render(request, "users/pay_balance.html", {
+                    'credit_user':credit_user, 
+                    'tutee': tutee,
+                    'transaction_group':transaction_group,
+                    'pending_payments':pending_payments,
+                    'sessions_acc':sessions_acc,
+                    'sessions_ongoing':sessions_ongoing,
+                    'pending_sum': pending_sum
+                })
+            payment = create_payment(token_id=token['data']['id'], amount=amount, tutor_name=tutor_name, date=session.session_date)
+
+            transaction = Transaction.objects.create(user=user, payment=current_payment, amount=amount)
+            amount_paid_current = Transaction.objects.filter(payment=current_payment).aggregate(current_amount=Sum('amount'))['current_amount']
+
+            # If tutee has already paid the pending amount, then mark it
+            if amount_paid_current >= current_payment.amount:
+                current_payment.is_paid = True
+                current_payment.save()
+
+            return redirect('transactions')
+        except Exception as ex:
+            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+            message = template.format(type(ex).__name__, ex.args)
+            print(message)
+            messages.error(request, 'Error: Something went wrong. Please check your inputs again.')
+
+    return render(request, "users/pay_balance.html", {
+        'credit_user':credit_user, 
+        'tutee': tutee,
+        'transaction_group':transaction_group,
+        'pending_payments':pending_payments,
+        'sessions_acc':sessions_acc,
+        'sessions_ongoing':sessions_ongoing,
+        'pending_sum': pending_sum
+    })
 
 @login_required
 def history(request):
