@@ -58,13 +58,9 @@
               <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS</a></li>
               {% endif %}
               {% endwith %}
-              <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'credits' %}">CREDITS</a></li>
+              <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'transactions' %}">TRANSACTIONS</a></li>
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'profile' %}">SETTINGS</a></li>
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'logout' %}">SIGN OUT</a></li>
-            </ul>
-            <ul id="nav-mobile" class="right hide-on-med-and-down">
-              <li><a class="akads-dark-blue-text nav-item nav-link">CREDITS: {{credit_user.credits}}</a></li>
-              <li><a class="btn akads-blue waves-effect waves-light" href="{% url 'credits' %}">TOP UP</a></li>
             </ul>
           {% else %}
             <ul id="nav-mobile" class="left hide-on-med-and-down">
@@ -78,10 +74,6 @@
               {% endwith %}
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'profile' %}">SETTINGS</a></li>
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'logout' %}">SIGN OUT</a></li>
-            </ul>
-            <ul id="nav-mobile" class="right hide-on-med-and-down">
-              <li><a class="akads-dark-blue-text nav-item nav-link">CREDITS: {{credit_user.credits}}</a></li>
-              <li><a class="btn akads-blue waves-effect waves-light" href="{% url 'credits' %}">REDEEM</a></li>
             </ul>
           {% endif %}
         {% else %}

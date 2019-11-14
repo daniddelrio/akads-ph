@@ -415,36 +415,6 @@ def confirm_session(request):
         messages.error(request, 'Error please input a valid code')
         return redirect('home')
 
-@login_required
-def credits(request):
-    user = request.user
-    credit_user = User.objects.get(id=user.id)
-    transaction_group = Transaction.objects.filter(user=user)
-    sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user))
-    if(user.is_tutee == True):
-        sessions_acc = Sessions_Accepted.objects.filter(tutee = user)
-        if(request.method == 'POST'):
-            try:
-                credit_user = User.objects.get(id=user.id)
-                user_credits = int(request.POST.get('credits'))
-                credit_user.credits = credit_user.credits + user_credits
-                credit_user.save()
-
-                transactions = Transaction.objects.create(user=user, credits=user_credits, amount=user_credits)
-                transaction_group = Transaction.objects.filter(user=user)
-                return render(request, "users/credits_page_tutee.html", {'credit_user':credit_user, 'transaction_group':transaction_group, 'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing} )
-            except Exception as ex:
-                template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-                message = template.format(type(ex).__name__, ex.args)
-                print(message)
-                return render(request, "users/credits_page_tutee.html", {'credit_user':credit_user, 'transaction_group':transaction_group, 'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing} )
-        return render(request, "users/credits_page_tutee.html", {'credit_user':credit_user, 'transaction_group':transaction_group, 'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing} )
-    else:
-        transaction_group = Transaction.objects.filter(tutor=user)
-        sessions_acc = Sessions_Accepted.objects.filter(tutor = user)
-
-        return render(request, "users/credits_page_tutor.html", {'credit_user':credit_user, 'transaction_group':transaction_group, 'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing} )
-
 # Shows both transactions and payments needed
 @login_required
 def transactions(request):
