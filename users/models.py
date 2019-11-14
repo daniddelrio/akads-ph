@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
+from datetime import datetime
 
 class User(AbstractUser):
     id = models.AutoField(primary_key=True)
@@ -86,12 +87,45 @@ class Sessions_Ended(models.Model):
     def __str__(self):
         return self.user.username
 
+    @property
+    def minutes(self):
+        if self.time_end:
+            from datetime import timedelta
+            print(self.time_end)
+            print(type(self.time_end))
+            time_start = timedelta(hours=self.time_start.hour, minutes=self.time_start.minute)
+            time_end = timedelta(hours=self.time_end.hour, minutes=self.time_end.minute)
+            duration = time_end - time_start
+            duration_in_s = duration.total_seconds()    
+            return divmod(duration_in_s, 60)[0]
+
+        return 0
+
+# Model for connection for payment between Tutee and Session
+class Payment(models.Model):
+    tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "payments")
+    session = models.OneToOneField(Sessions_Ended, on_delete=models.CASCADE, related_name="payment")
+    amount = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    fully_paid_at = models.DateTimeField(blank=True, null=True)
+    is_paid = models.BooleanField(default=False)
+    
+    def __init__(self, *args, **kwargs):
+        super(Payment, self).__init__(*args, **kwargs)
+        self.__is_paid = self.is_paid
+
+    def save(self, *args, **kwargs):
+        if self.is_paid and not self.__is_paid:
+            self.fully_paid_at = datetime.now()
+        super(Payment, self).save(*args, **kwargs)    
+
+# Model to be used by the PayMongo integration when there is a transaction
 class Transaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "transactions")
-    tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "transactiontutor", null = True)
-    date = models.DateField(default=timezone.now)
-    amount = models.IntegerField(null = True)
-    credits = models.IntegerField(null = True)
+    # ForeignKey because a user can choose to pay in increments for a session
+    payment = models.ForeignKey(Payment, on_delete=models.CASCADE, related_name="transactions")
+    amount = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.user.username
