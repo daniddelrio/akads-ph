@@ -2,12 +2,14 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .models import Tutor, Tutee, User, Locations, Sessions, Sessions_Accepted, Sessions_Ended, Transaction, Requests, Rating, Subjects, Bookings
+from .models import *
 from django.contrib.auth import authenticate, login
 from django.urls import reverse
 from django.utils.crypto import get_random_string
 from django.contrib.auth import update_session_auth_hash
-from django.db.models import Q
+from django.db import transaction
+from django.db.models import Q, Sum
+from .services import get_amount_from_minutes
 
 import datetime
 
@@ -307,13 +309,11 @@ def delete_request(request, session_id):
     return redirect('home')
 
 @login_required
+@transaction.atomic
 def end_session(request, session_id):
     user=request.user
-    user.credits = user.credits - 500
     sessions_acc = Sessions_Accepted.objects.filter(tutee = user)
     sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user))
-
-    # transaction = Transaction.objects.create(user=new_user, tutor=new_tutor, amount=500, credits=-500)
 
     ended = Sessions_Ended.objects.filter(pk=session_id)
 
@@ -325,6 +325,7 @@ def end_session(request, session_id):
     ended = ended.first()
     if (request.method == 'POST'):
         try:
+
             # ============ CHANGE ONCE MAP IS BACK =============
             # new_location = request.POST.get('location')
             new_location = 'Test'
@@ -332,10 +333,20 @@ def end_session(request, session_id):
 
             messages.success(request, f'Session has ended!')
 
-            ended.time_end = new_time_end
+            ended.time_end = datetime.datetime.strptime(new_time_end, "%I:%M %p").time()
             ended.save()
 
-            return redirect('ongoing')
+            minutes = ended.minutes
+            amount = get_amount_from_minutes(minutes)
+
+            print("miunutes AND AMOUNT")
+            print(minutes)
+            print(amount)
+
+            if not Payment.objects.filter(session=ended).exists():
+                Payment.objects.create(tutee=user, session=ended, amount=amount)
+
+            return redirect('transactions')
         except Exception as ex:
             template = "An exception of type {0} occurred. Arguments:\n{1!r}"
             message = template.format(type(ex).__name__, ex.args)
@@ -438,6 +449,38 @@ def credits(request):
 
         return render(request, "users/credits_page_tutor.html", {'credit_user':credit_user, 'transaction_group':transaction_group, 'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing} )
 
+# Shows both transactions and payments needed
+@login_required
+def transactions(request):
+    user = request.user
+    if(not user.is_tutee):
+        messages.error(request, 'Error: you cannot access this page.')
+        return redirect('index')
+
+    credit_user = User.objects.get(id=user.id)
+    transaction_group = Transaction.objects.filter(user=user)
+    pending_payments = Payment.objects.filter(tutee=user, is_paid=False)
+    completed_payments = Payment.objects.filter(tutee=user, is_paid=True)
+    sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user))
+    sessions_acc = Sessions_Accepted.objects.filter(Q(tutee=user) | Q(tutor=user))
+
+    # Get sum of pending payments
+    pending_sum = pending_payments.aggregate(Sum('amount'))['amount__sum']
+    pending_sum = 0 if pending_sum is None else pending_sum
+
+    return render(request, "users/transactions.html", {
+        'credit_user':credit_user, 
+        'transaction_group':transaction_group,
+        'pending_payments':pending_payments,
+        'completed_payments':completed_payments,
+        'sessions_acc':sessions_acc,
+        'sessions_ongoing':sessions_ongoing,
+        'pending_sum': pending_sum
+    })
+
+@login_required
+def pay_balance(request):
+    pass
 
 @login_required
 def history(request):
