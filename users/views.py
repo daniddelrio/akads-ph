@@ -132,6 +132,10 @@ def home(request):
         sessions_ongoing = Sessions_Ended.objects.filter(user=user, time_end=None)
         if(request.method == 'POST'):
             try:
+                if Payment.objects.filter(is_paid=False).exists():
+                    messages.error(request, 'You have pending payments. Please pay these first.')
+                    return redirect('transactions')
+                    
                 session_num = len(Sessions_Accepted.objects.filter(tutee = user))
 
                 new_grade = request.POST.get('grade')
