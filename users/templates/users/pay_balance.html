@@ -1,0 +1,93 @@
+{% extends "./base.html" %}
+{% load static %}
+
+{% block body %}
+<body>
+{% endblock %}
+
+{%block content%}
+  <div class="container user" id='map-check' stat='tutor'>
+    <form method="POST">
+    {% csrf_token %}
+      <div class="card-panel upcoming">
+        <div class="wrapper">
+            <h4 class="akads-blue-text">Payment</h4>
+            <h5>Amount left: PHP {{ pending_sum }}</h5>
+            <div class="form-group input-field">
+              <input id="cardnum" type="text" name="cardnum" class="validate" value="{{ tutee.cardnum }}">
+              <label for="cardnum">Card Number:</label>
+            </div>
+            <div class="form-group input-field">
+              <input id="fullname" type="text" name="fullname" class="validate" value="{{ tutee.fullname }}">
+              <label for="fullname">Full Name:</label>
+            </div>
+            <div class="form-group input-field">
+              <select type="text" name="expiry_date" value="{{ tutee.expiry_date }}">
+                <option value="01/2020">01/2020</option>
+                <option value="02/2020">02/2020</option>
+                <option value="03/2020">03/2020</option>
+                <option value="04/2020">04/2020</option>
+                <option value="05/2020">05/2020</option>
+                <option value="06/2020">06/2020</option>
+                <option value="07/2020">07/2020</option>
+                <option value="08/2020">08/2020</option>
+                <option value="09/2020">09/2020</option>
+                <option value="10/2020">10/2020</option>
+                <option value="11/2020">11/2020</option>
+                <option value="12/2020">12/2020</option>
+                <option value="01/2021">01/2021</option>
+                <option value="02/2021">02/2021</option>
+                <option value="03/2021">03/2021</option>
+                <option value="04/2021">04/2021</option>
+                <option value="05/2021">05/2021</option>
+                <option value="06/2021">06/2021</option>
+                <option value="07/2021">07/2021</option>
+                <option value="08/2021">08/2021</option>
+                <option value="09/2021">09/2021</option>
+                <option value="10/2021">10/2021</option>
+                <option value="11/2021">11/2021</option>
+                <option value="12/2021">12/2021</option>
+                <option value="01/2022">01/2022</option>
+                <option value="02/2022">02/2022</option>
+                <option value="03/2022">03/2022</option>
+                <option value="04/2022">04/2022</option>
+                <option value="05/2022">05/2022</option>
+                <option value="06/2022">06/2022</option>
+                <option value="07/2022">07/2022</option>
+                <option value="08/2022">08/2022</option>
+                <option value="09/2022">09/2022</option>
+                <option value="10/2022">10/2022</option>
+                <option value="11/2022">11/2022</option>
+                <option value="12/2022">12/2022</option>
+              </select>
+              <label>Expiry Date:</label>
+            </div>
+            <div class="form-group input-field" value="{{ tutee.seccode }}">
+              <input id="seccode" type="text" name="seccode" class="validate">
+              <label for="seccode">Security Code:</label>
+            </div>
+            <div class="form-group input-field">
+              <input id="amount" type="text" name="amount" class="validate">
+              <label for="amount">Amount (in PHP):</label>
+            </div>
+
+            <div class="akads-dark-blue-text center-align">
+              <a class="btn akads-blue waves-effect waves-light modal-trigger" href="#modal2">Pay Amount</a>
+              <div id="modal2" class="modal">
+                <div class="modal-content container">
+                  <img class="logo" src="{% static 'users/img/akads-nav-logo.png' %}">
+                  <h5 class="akads-blue-text">Are you sure you want to proceed with the payment?</h5>
+                </div>
+                <div class="modal-footer">
+                  <a href="#!" class="modal-close waves-effect waves-light btn-small akads-light-blue akads-dark-blue-text">Close</a>
+                  <button type="submit" class="modal-close waves-effect waves-light btn-small">Confirm</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+{% endblock content %}
+
