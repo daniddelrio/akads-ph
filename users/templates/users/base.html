@@ -27,6 +27,11 @@
       {% else %}
       <li><a class="akads-dark-blue-text" href="{% url 'upcoming' %}">UPCOMING</a></li>
       {% endif %}
+      {% if sessions_ongoing|length > 0 %}
+      <li><a class="akads-dark-blue-text" href="{% url 'ongoing' %}">ONGOING<span id="upc-badge" class="badge">{{ sessions_ongoing|length }}</span></a></li>
+      {% else %}
+      <li><a class="akads-dark-blue-text" href="{% url 'ongoing' %}">ONGOING</a></li>
+      {% endif %}
       {% if user.is_tutee %}
       <li><a class="akads-dark-blue-text" href="{% url 'pending' %}">PENDING</a></li>
       {% endif %}
@@ -46,33 +51,29 @@
           {% if user.is_tutee %}
             <ul id="nav-mobile" class="left hide-on-med-and-down">
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'home' %}">HOME</a></li>
-              {% if sessions_acc|length > 0 %}
-              <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS<span class="new badge akads-blue" data-badge-caption="">{{ sessions_acc|length }}</span></a></li>
+              {% with sessions_ongoing|length as ongoing_length %}  
+              {% if sessions_acc|length > 0 or ongoing_length > 0 %}
+              <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS<span class="new badge akads-blue" data-badge-caption="">{{ sessions_acc|length|add:ongoing_length }}</span></a></li>
               {% else %}
               <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS</a></li>
               {% endif %}
-              <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'credits' %}">CREDITS</a></li>
+              {% endwith %}
+              <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'transactions' %}">TRANSACTIONS</a></li>
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'profile' %}">SETTINGS</a></li>
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'logout' %}">SIGN OUT</a></li>
-            </ul>
-            <ul id="nav-mobile" class="right hide-on-med-and-down">
-              <li><a class="akads-dark-blue-text nav-item nav-link">CREDITS: {{credit_user.credits}}</a></li>
-              <li><a class="btn akads-blue waves-effect waves-light" href="{% url 'credits' %}">TOP UP</a></li>
             </ul>
           {% else %}
             <ul id="nav-mobile" class="left hide-on-med-and-down">
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'home' %}">HOME</a></li>
-              {% if sessions_acc|length > 0 %}
-              <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS<span class="new badge akads-blue" data-badge-caption="">{{ sessions_acc|length }}</span></a></li>
+              {% with sessions_ongoing|length as ongoing_length %}  
+              {% if sessions_acc|length > 0 or ongoing_length > 0 %}
+              <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS<span class="new badge akads-blue" data-badge-caption="">{{ sessions_acc|length|add:ongoing_length }}</span></a></li>
               {% else %}
               <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS</a></li>
               {% endif %}
+              {% endwith %}
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'profile' %}">SETTINGS</a></li>
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'logout' %}">SIGN OUT</a></li>
-            </ul>
-            <ul id="nav-mobile" class="right hide-on-med-and-down">
-              <li><a class="akads-dark-blue-text nav-item nav-link">CREDITS: {{credit_user.credits}}</a></li>
-              <li><a class="btn akads-blue waves-effect waves-light" href="{% url 'credits' %}">REDEEM</a></li>
             </ul>
           {% endif %}
         {% else %}
