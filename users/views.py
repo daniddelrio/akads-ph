@@ -237,28 +237,6 @@ def upcoming(request):
         return render(request, "users/tutor/upcoming_tutor.html", context, {'count': count})
 
 @login_required
-def ongoing(request):
-    user=request.user
-    credit_user = User.objects.get(id=user.id)
-    if(user.is_tutee==True):
-        sessions_acc = sorted(Sessions_Accepted.objects.filter(tutee = user), key=lambda x : x.session.session_date)
-        sessions_ongoing = sorted(Sessions_Ended.objects.filter(user=user, time_end=None), key=lambda x : x.session_date)
-        return render(request, "users/tutee/ongoing_tutee.html", {'session_group':sessions_ongoing, 'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
-    else:
-        sessions_acc = sorted(Sessions_Accepted.objects.filter(tutor = user), key=lambda x : x.session.session_date)
-        sessions_ongoing = sorted(Sessions_Ended.objects.filter(tutor=user, time_end=None), key=lambda x : x.session_date)
-        print(Sessions_Ended.objects.filter(tutor=user))
-        count = 1
-        tutee_now = []
-        for x in sessions_ongoing:
-            tutee_now = Tutee.objects.get(user=x.user).cellnum
-
-        if(tutee_now is not None):
-            return render(request, "users/tutor/ongoing_tutor.html", {'session_group':sessions_ongoing, 'sessions_acc':sessions_acc, 'credit_user':credit_user, 'cellnum':tutee_now, 'sessions_ongoing' : sessions_ongoing}, {'count':count})
-        else:
-            return render(request, "users/tutor/ongoing_tutor.html", {'session_group':sessions_ongoing, 'sessions_acc':sessions_acc, 'credit_user':credit_user, 'sessions_ongoing' : sessions_ongoing}, {'count':count})
-
-@login_required
 def pending(request):
     sessions = Sessions.objects.filter(is_accepted = False)
     sessions2 = sessions.filter(user=user)
@@ -318,7 +296,7 @@ def end_session(request, session_id):
     if not ended.exists():
         print(message)
         messages.error(request, 'Error: this session does not exist!')
-        return redirect('ongoing')
+        return redirect('home')
 
     ended = ended.first()
     if (request.method == 'POST'):
@@ -382,7 +360,7 @@ def start_session(request, session_id):
 
             Sessions_Ended.objects.create(session_id=new_id, user=new_user, grade=new_grade, subject=new_subject, time_start=new_time_start, time_end=None, session_date=new_session_date, location=new_location, tutor=new_tutor)
             new_session.delete()
-            return redirect('ongoing')
+            return redirect('home')
         except Exception as ex:
             template = "An exception of type {0} occurred. Arguments:\n{1!r}"
             message = template.format(type(ex).__name__, ex.args)
@@ -485,8 +463,6 @@ def pay_balance(request):
                     'tutee': tutee,
                     'transaction_group':transaction_group,
                     'pending_payments':pending_payments,
-                    'sessions_acc':sessions_acc,
-                    'sessions_ongoing':sessions_ongoing,
                     'pending_sum': pending_sum
                 })
             payment = create_payment(token_id=token['data']['id'], amount=amount, tutor_name=tutor_name, date=session.session_date)
@@ -551,7 +527,7 @@ def edit_password(request):
             message = template.format(type(ex).__name__, ex.args)
             print(message)
             messages.error(request, 'Error please input valid values for each field')
-            return render(request, 'users/edit_password.html', {'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
+
     return render(request, 'users/edit_password.html', {'credit_user':user})
 
 @login_required
@@ -635,27 +611,21 @@ def edit_card(request):
 @login_required
 def profile(request):
     user=request.user
-    sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user))
     if(user.is_tutee==True):
         user2 = Tutee.objects.get(user=user)
-        sessions_acc = Sessions_Accepted.objects.filter(tutee = user)
     else:
         loc = Locations.objects.filter(user=user)
         user2 = Tutor.objects.get(user=user)
-        sessions_acc = Sessions_Accepted.objects.filter(tutor = user)
 
     return render(request, 'users/profile.html', {
         'current_user':user2, 
         'location_user':loc, 
-        'sessions_acc':sessions_acc, 
-        'sessions_ongoing':sessions_ongoing, 
         'credit_user':user
         })
 
 
 def booking(request):
     user=request.user
-    sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user))
     if(request.method == 'POST'):
         try:
             return redirect('home')
@@ -697,5 +667,5 @@ def accepted(request):
         sessions_set = Sessions_Accepted.objects.filter(tutor=user)
         sessions = Count(sessions_set)
         print(sessions)
-        
+
     return render(request, "users/base.html", {'sessions_group':sessions})
