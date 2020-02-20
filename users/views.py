@@ -128,8 +128,6 @@ def home(request):
     credit_user = User.objects.get(id=user.id)
     if(user.is_tutee==True):
         user2 = Tutee.objects.get(user=user)
-        sessions_acc = Sessions_Accepted.objects.filter(tutee = user)
-        sessions_ongoing = Sessions_Ended.objects.filter(user=user, time_end=None)
         if(request.method == 'POST'):
             try:
                 if Payment.objects.filter(is_paid=False).exists():
@@ -182,14 +180,14 @@ def home(request):
                         if(x.user == y.user):
                             req = Requests.objects.create(user=x.user, session=new_sessions)
                 messages.success(request, f'Your request has been sent!')
-                return render(request, "users/tutee/tutee_home.html", {'current_user':user2, 'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
             except:
                 session_num = len(Sessions_Accepted.objects.filter(tutee = user))
-
                 messages.error(request, 'Error please input valid values for each field')
-                return render(request, "users/tutee/tutee_home.html", {'current_user':user2, 'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
-        else:
-            return render(request, 'users/tutee/tutee_home.html', {'current_user':user2, 'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
+
+        return render(request, "users/tutee/tutee_home.html", {
+            'current_user':user2, 
+            'credit_user':credit_user
+            })
     else:
         if(request.method == 'POST'):
             _sessions = Sessions.objects.filter(code=request.POST.get('code'))
@@ -209,10 +207,10 @@ def home(request):
             # Get all sessions with the same code
             _request.sessions = sorted(Sessions.objects.filter(code=_request.session.code), key=lambda x : x.session_date)
 
-        sessions_acc = Sessions_Accepted.objects.filter(tutor = user)
-        sessions_ongoing = Sessions_Ended.objects.filter(user=user, time_end=None)
-
-        return render(request, "users/tutor/tutor_home.html", {'session_group':_requests, 'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
+        return render(request, "users/tutor/tutor_home.html", {
+            'session_group':_requests,
+            'credit_user':credit_user
+            })
 
 @login_required
 def upcoming(request):
@@ -221,54 +219,31 @@ def upcoming(request):
 
     if(user.is_tutee==True):
         sessions = sorted(Sessions_Accepted.objects.filter(tutee = user), key=lambda x : x.session.session_date)
-        sessions_acc = sorted(Sessions_Accepted.objects.filter(tutee = user), key=lambda x : x.session.session_date)
-        sessions_ongoing = Sessions_Ended.objects.filter(user=user, time_end=None)
-        return render(request, "users/tutee/upcoming_tutee.html", {'session_group':sessions, 'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
+        return render(request, "users/tutee/upcoming_tutee.html", {'session_group':sessions})
     else:
         sessions = sorted(Sessions_Accepted.objects.filter(tutor = user), key=lambda x : x.session.session_date)
-        sessions_acc = sorted(Sessions_Accepted.objects.filter(tutor = user), key=lambda x : x.session.session_date)
-        sessions_ongoing = Sessions_Ended.objects.filter(tutor=user, time_end=None)
         count = 1
         tutee_now = []
         for x in sessions:
             tutee_now = Tutee.objects.get(user=x.tutee).cellnum
 
+        context = {
+            'session_group':sessions,
+            'credit_user':credit_user,
+        }
         if(tutee_now is not None):
-            return render(request, "users/tutor/upcoming_tutor.html", {'session_group':sessions, 'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user, 'cellnum':tutee_now}, {'count':count})
-        else:
-            return render(request, "users/tutor/upcoming_tutor.html", {'session_group':sessions, 'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user}, {'count':count})
+            context['cellnum'] = tutee_now
 
-@login_required
-def ongoing(request):
-    user=request.user
-    credit_user = User.objects.get(id=user.id)
-    if(user.is_tutee==True):
-        sessions_acc = sorted(Sessions_Accepted.objects.filter(tutee = user), key=lambda x : x.session.session_date)
-        sessions_ongoing = sorted(Sessions_Ended.objects.filter(user=user, time_end=None), key=lambda x : x.session_date)
-        return render(request, "users/tutee/ongoing_tutee.html", {'session_group':sessions_ongoing, 'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
-    else:
-        sessions_acc = sorted(Sessions_Accepted.objects.filter(tutor = user), key=lambda x : x.session.session_date)
-        sessions_ongoing = sorted(Sessions_Ended.objects.filter(tutor=user, time_end=None), key=lambda x : x.session_date)
-        print(Sessions_Ended.objects.filter(tutor=user))
-        count = 1
-        tutee_now = []
-        for x in sessions_ongoing:
-            tutee_now = Tutee.objects.get(user=x.user).cellnum
-
-        if(tutee_now is not None):
-            return render(request, "users/tutor/ongoing_tutor.html", {'session_group':sessions_ongoing, 'sessions_acc':sessions_acc, 'credit_user':credit_user, 'cellnum':tutee_now, 'sessions_ongoing' : sessions_ongoing}, {'count':count})
-        else:
-            return render(request, "users/tutor/ongoing_tutor.html", {'session_group':sessions_ongoing, 'sessions_acc':sessions_acc, 'credit_user':credit_user, 'sessions_ongoing' : sessions_ongoing}, {'count':count})
+        return render(request, "users/tutor/upcoming_tutor.html", context, {'count': count})
 
 @login_required
 def pending(request):
-    user=request.user
-    credit_user = User.objects.get(id=user.id)
     sessions = Sessions.objects.filter(is_accepted = False)
     sessions2 = sessions.filter(user=user)
-    sessions_acc = Sessions_Accepted.objects.filter(tutee = user)
-    sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user))
-    return render(request, "users/tutee/pending.html", {'session_group':sessions2, 'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
+    return render(request, "users/tutee/pending.html", {
+        'session_group':sessions2, 
+        'credit_user':request.user
+        })
 
 @login_required
 def cancel_pending(request, session_id):
@@ -316,15 +291,12 @@ def delete_request(request, session_id):
 @transaction.atomic
 def end_session(request, session_id):
     user=request.user
-    sessions_acc = Sessions_Accepted.objects.filter(tutee = user)
-    sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user))
-
     ended = Sessions_Ended.objects.filter(pk=session_id)
 
     if not ended.exists():
         print(message)
         messages.error(request, 'Error: this session does not exist!')
-        return redirect('ongoing')
+        return redirect('home')
 
     ended = ended.first()
     if (request.method == 'POST'):
@@ -353,19 +325,18 @@ def end_session(request, session_id):
             print(message)
             messages.error(request, 'Error: please input valid values for each field')
 
-    return render(request, "users/tutee/end_session.html", {'session' : ended, 'sessions_acc' : sessions_acc, 'sessions_ongoing': sessions_ongoing, 'credit_user': user})
+    return render(request, "users/tutee/end_session.html", {
+        'session' : ended,
+        'credit_user': user
+        })
 
 # In the POV of the TUTOR
 @login_required
 def start_session(request, session_id):
     user=request.user
-    credit_user = User.objects.get(id=user.id)
 
     new_session = Sessions.objects.get(id=session_id)
     done = Sessions_Accepted.objects.get(session=new_session)
-
-    sessions_acc = Sessions_Accepted.objects.filter(tutor = user)
-    sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user))
 
     new_user = new_session.user
     new_tutor = done.tutor
@@ -389,14 +360,16 @@ def start_session(request, session_id):
 
             Sessions_Ended.objects.create(session_id=new_id, user=new_user, grade=new_grade, subject=new_subject, time_start=new_time_start, time_end=None, session_date=new_session_date, location=new_location, tutor=new_tutor)
             new_session.delete()
-            return redirect('ongoing')
+            return redirect('home')
         except Exception as ex:
             template = "An exception of type {0} occurred. Arguments:\n{1!r}"
             message = template.format(type(ex).__name__, ex.args)
             print(message)
             messages.error(request, 'Error: please input valid values for each field')
 
-    return render(request, "users/tutor/start_session.html", {'session' : done, 'sessions_acc' : sessions_acc, 'sessions_ongoing': sessions_ongoing, 'credit_user': credit_user})
+    return render(request, "users/tutor/start_session.html", {
+        'session' : done,
+        'credit_user': user})
 
 @login_required
 def confirm_session(request):
@@ -427,13 +400,9 @@ def transactions(request):
         messages.error(request, 'Error: you cannot access this page.')
         return redirect('landing')
 
-    credit_user = User.objects.get(id=user.id)
     transaction_group = Transaction.objects.filter(user=user)
     pending_payments = Payment.objects.filter(tutee=user, is_paid=False)
     completed_payments = Payment.objects.filter(tutee=user, is_paid=True)
-
-    sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user))
-    sessions_acc = Sessions_Accepted.objects.filter(Q(tutee=user) | Q(tutor=user))
 
     # Get sum of pending payments
     pending_sum = pending_payments.aggregate(Sum('amount'))['amount__sum']
@@ -443,12 +412,10 @@ def transactions(request):
     pending_sum -= amount_paid
 
     return render(request, "users/transactions.html", {
-        'credit_user':credit_user, 
+        'credit_user': user, 
         'transaction_group':transaction_group,
         'pending_payments':pending_payments,
         'completed_payments':completed_payments,
-        'sessions_acc':sessions_acc,
-        'sessions_ongoing':sessions_ongoing,
         'pending_sum': pending_sum
     })
 
@@ -460,12 +427,9 @@ def pay_balance(request):
         messages.error(request, 'Error: you cannot access this page.')
         return redirect('landing')
 
-    credit_user = User.objects.get(id=user.id)
     tutee = Tutee.objects.get(user=user)
     transaction_group = Transaction.objects.filter(user=user)
     pending_payments = Payment.objects.filter(tutee=user, is_paid=False)
-    sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user))
-    sessions_acc = Sessions_Accepted.objects.filter(Q(tutee=user) | Q(tutor=user))
 
     # Get sum of pending payments
     pending_sum = pending_payments.aggregate(Sum('amount'))['amount__sum']
@@ -499,8 +463,6 @@ def pay_balance(request):
                     'tutee': tutee,
                     'transaction_group':transaction_group,
                     'pending_payments':pending_payments,
-                    'sessions_acc':sessions_acc,
-                    'sessions_ongoing':sessions_ongoing,
                     'pending_sum': pending_sum
                 })
             payment = create_payment(token_id=token['data']['id'], amount=amount, tutor_name=tutor_name, date=session.session_date)
@@ -521,28 +483,24 @@ def pay_balance(request):
             messages.error(request, 'Error: Something went wrong. Please check your inputs again.')
 
     return render(request, "users/pay_balance.html", {
-        'credit_user':credit_user, 
+        'credit_user': user, 
         'tutee': tutee,
         'transaction_group':transaction_group,
         'pending_payments':pending_payments,
-        'sessions_acc':sessions_acc,
-        'sessions_ongoing':sessions_ongoing,
         'pending_sum': pending_sum
     })
 
 @login_required
 def history(request):
     user=request.user
-    credit_user = User.objects.get(id=user.id)
-    sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user))
+    context = {
+        'session_group':sessions,
+        'credit_user':user
+    }
     if(user.is_tutee==True):
-        sessions = Sessions_Ended.objects.filter(user=user)
-        sessions_acc = Sessions_Accepted.objects.filter(tutee = user)
-        return render(request, "users/tutee/history_tutee.html", {'session_group':sessions, 'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
-    else:
-        sessions = Sessions_Ended.objects.filter(tutor=user)
-        sessions_acc = Sessions_Accepted.objects.filter(tutor = user)
-        return render(request, "users/tutor/history_tutor.html", {'session_group':sessions, 'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
+        return render(request, "users/tutee/history_tutee.html", context)
+
+    return render(request, "users/tutor/history_tutor.html", context)
 
 def landing(request):
     return render(request, 'users/landing.html')
@@ -553,12 +511,6 @@ def tutor_tutee(request):
 @login_required
 def edit_password(request):
     user = request.user
-    credit_user = User.objects.get(id=user.id)
-    sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user))
-    if (user.is_tutee==True):
-        sessions_acc = Sessions_Accepted.objects.filter(tutee = user)
-    else:
-        sessions_acc = Sessions_Accepted.objects.filter(tutor = user)
 
     if (request.method == 'POST'):
         try:
@@ -575,16 +527,14 @@ def edit_password(request):
             message = template.format(type(ex).__name__, ex.args)
             print(message)
             messages.error(request, 'Error please input valid values for each field')
-            return render(request, 'users/edit_password.html', {'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
-    return render(request, 'users/edit_password.html', {'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
+
+    return render(request, 'users/edit_password.html', {'credit_user':user})
 
 @login_required
 def edit_location(request):
     user = request.user
-    credit_user = User.objects.get(id=user.id)
-    sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user))
+    context = {'credit_user' : user}
     if(user.is_tutee==True):
-        sessions_acc = Sessions_Accepted.objects.filter(tutee = user)
         if (request.method == 'POST'):
             try:
                 tutee = Tutee.objects.get(user=user)
@@ -605,10 +555,8 @@ def edit_location(request):
                 message = template.format(type(ex).__name__, ex.args)
                 print(message)
                 messages.error(request, 'Error please input valid values for each field')
-                if(user.is_tutee==True):
-                    return render(request, 'users/edit_location_tutee.html', {'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
-                else:
-                    return render(request, 'users/edit_location_tutor.html', {'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
+
+        return render(request, 'users/edit_location_tutee.html', context)
     else:
         sessions_acc = Sessions_Accepted.objects.filter(tutor = user)
         if (request.method == 'POST'):
@@ -630,21 +578,12 @@ def edit_location(request):
                 message = template.format(type(ex).__name__, ex.args)
                 print(message)
                 messages.error(request, 'Error please input valid values for each field')
-                if(user.is_tutee==True):
-                    return render(request, 'users/edit_location_tutee.html', {'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
-                else:
-                    return render(request, 'users/edit_location_tutor.html', {'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
-    if(user.is_tutee==True):
-        return render(request, 'users/edit_location_tutee.html', {'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
-    else:
-        return render(request, 'users/edit_location_tutor.html', {'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
+
+        return render(request, 'users/edit_location_tutor.html', context)
 
 @login_required
 def edit_card(request):
     user = request.user
-    credit_user = User.objects.get(id=user.id)
-    sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user))
-    sessions_acc = Sessions_Accepted.objects.filter(tutee = user)
     try:
         if (request.method == 'POST'):
             tutee = Tutee.objects.get(user=user)
@@ -665,29 +604,28 @@ def edit_card(request):
         message = template.format(type(ex).__name__, ex.args)
         print(message)
         messages.error(request, 'Error please input valid values for each field')
-        return render(request, 'users/edit_card.html', {'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
-    return render(request, 'users/edit_card.html', {'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
+
+    return render(request, 'users/edit_card.html', {'credit_user':user})
 
 
 @login_required
 def profile(request):
     user=request.user
-    credit_user = User.objects.get(id=user.id)
-    sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user))
     if(user.is_tutee==True):
         user2 = Tutee.objects.get(user=user)
-        sessions_acc = Sessions_Accepted.objects.filter(tutee = user)
-        return render(request, 'users/profile.html', {'current_user':user2, 'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
     else:
         loc = Locations.objects.filter(user=user)
         user2 = Tutor.objects.get(user=user)
-        sessions_acc = Sessions_Accepted.objects.filter(tutor = user)
-    return render(request, 'users/profile.html', {'current_user':user2, 'location_user':loc, 'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
+
+    return render(request, 'users/profile.html', {
+        'current_user':user2, 
+        'location_user':loc, 
+        'credit_user':user
+        })
 
 
 def booking(request):
     user=request.user
-    sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user))
     if(request.method == 'POST'):
         try:
             return redirect('home')
@@ -697,8 +635,8 @@ def booking(request):
             print(message)
             messages.error(request, 'Error please input valid values for each field')
             return redirect('home')
-    else:
-        return render(request, 'users/tutee/tutee_home.html')
+
+    return render(request, 'users/tutee/tutee_home.html')
 
 
 def rating(request, session_id):
@@ -716,20 +654,18 @@ def rating(request, session_id):
             message = template.format(type(ex).__name__, ex.args)
             print(message)
             messages.error(request, 'Error please input valid values for each field')
-            return redirect('home')
-    else:
-        return redirect('home')
+
+    return redirect('home')
 
 def accepted(request):
     user = request.user
     if(user.is_tutee == True):
         sessions_set = Sessions_Accepted.objects.filter(tutee=user)
         sessions = Count(sessions_set)
-        print("BITCHEZ")
         print(sessions)
     else:
         sessions_set = Sessions_Accepted.objects.filter(tutor=user)
         sessions = Count(sessions_set)
-        print("BITCHEZ")
         print(sessions)
+
     return render(request, "users/base.html", {'sessions_group':sessions})

@@ -34,7 +34,6 @@ urlpatterns = [
     path('login/', user_views.login_user, name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name = 'users/landing.html'), name='logout'),
     path('home/upcoming', user_views.upcoming, name='upcoming'),
-    path('home/ongoing', user_views.ongoing, name='ongoing'),
     path('home/pending', user_views.pending, name='pending'),
     path('home/history', user_views.history, name='history'),
     path('home/<int:session_id>/start-session', user_views.start_session, name='start_session'),

@@ -10,6 +10,8 @@
     <!--- Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     {% load static %}
+    {% load navbar_sessions %}
+    {% sessions_acc request.user as sessions_acc %}
     <link rel="stylesheet" type="text/css" href="{% static 'users/css/materialize.css' %}" media="screen,projection">
     <link rel="stylesheet" type="text/css" href="{% static 'users/css/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'users/css/simple-calendar.css' %}">
@@ -27,11 +29,7 @@
       {% else %}
       <li><a class="akads-dark-blue-text" href="{% url 'upcoming' %}">UPCOMING</a></li>
       {% endif %}
-      {% if sessions_ongoing|length > 0 %}
-      <li><a class="akads-dark-blue-text" href="{% url 'ongoing' %}">ONGOING<span id="upc-badge" class="badge">{{ sessions_ongoing|length }}</span></a></li>
-      {% else %}
-      <li><a class="akads-dark-blue-text" href="{% url 'ongoing' %}">ONGOING</a></li>
-      {% endif %}
+
       {% if user.is_tutee %}
       <li><a class="akads-dark-blue-text" href="{% url 'pending' %}">PENDING</a></li>
       {% endif %}
@@ -51,13 +49,11 @@
           {% if user.is_tutee %}
             <ul id="nav-mobile" class="left hide-on-med-and-down">
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'home' %}">HOME</a></li>
-              {% with sessions_ongoing|length as ongoing_length %}  
-              {% if sessions_acc|length > 0 or ongoing_length > 0 %}
-              <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS<span class="new badge akads-blue" data-badge-caption="">{{ sessions_acc|length|add:ongoing_length }}</span></a></li>
+              {% if sessions_acc|length > 0 %}
+              <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS<span class="new badge akads-blue" data-badge-caption="">{{ sessions_acc|length }}</span></a></li>
               {% else %}
               <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS</a></li>
               {% endif %}
-              {% endwith %}
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'transactions' %}">TRANSACTIONS</a></li>
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'profile' %}">SETTINGS</a></li>
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'logout' %}">SIGN OUT</a></li>
@@ -65,13 +61,11 @@
           {% else %}
             <ul id="nav-mobile" class="left hide-on-med-and-down">
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'home' %}">HOME</a></li>
-              {% with sessions_ongoing|length as ongoing_length %}  
-              {% if sessions_acc|length > 0 or ongoing_length > 0 %}
-              <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS<span class="new badge akads-blue" data-badge-caption="">{{ sessions_acc|length|add:ongoing_length }}</span></a></li>
+              {% if sessions_acc|length > 0 %}
+              <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS<span class="new badge akads-blue" data-badge-caption="">{{ sessions_acc|length }}</span></a></li>
               {% else %}
               <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS</a></li>
               {% endif %}
-              {% endwith %}
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'profile' %}">SETTINGS</a></li>
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'logout' %}">SIGN OUT</a></li>
             </ul>
