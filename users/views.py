@@ -365,7 +365,8 @@ def start_session(request, session_id):
     done = Sessions_Accepted.objects.get(session=new_session)
 
     sessions_acc = Sessions_Accepted.objects.filter(tutor = user)
-    sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user))
+    sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user), time_end=None)
+    print(len(sessions_ongoing))
 
     new_user = new_session.user
     new_tutor = done.tutor
@@ -684,7 +685,7 @@ def profile(request):
         sessions_acc = Sessions_Accepted.objects.filter(tutor = user)
     return render(request, 'users/profile.html', {'current_user':user2, 'location_user':loc, 'sessions_acc':sessions_acc, 'sessions_ongoing':sessions_ongoing, 'credit_user':credit_user})
 
-
+@login_required
 def booking(request):
     user=request.user
     sessions_ongoing = Sessions_Ended.objects.filter(Q(tutor=user) | Q(user=user))
