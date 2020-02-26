@@ -125,15 +125,16 @@ def login_user(request):
 @login_required
 def home(request):
     user=request.user
-    credit_user = User.objects.get(id=user.id)
+
     if(user.is_tutee==True):
         user2 = Tutee.objects.get(user=user)
+
+        if Payment.objects.filter(is_paid=False, tutee=user).exists():
+            messages.error(request, 'You have pending payments. Please pay these first.')
+            return redirect('transactions')
+
         if(request.method == 'POST'):
             try:
-                if Payment.objects.filter(is_paid=False).exists():
-                    messages.error(request, 'You have pending payments. Please pay these first.')
-                    return redirect('transactions')
-                    
                 session_num = len(Sessions_Accepted.objects.filter(tutee = user))
 
                 new_grade = request.POST.get('grade')
@@ -186,7 +187,7 @@ def home(request):
 
         return render(request, "users/tutee/tutee_home.html", {
             'current_user':user2, 
-            'credit_user':credit_user
+            'credit_user':user
             })
     else:
         if(request.method == 'POST'):
@@ -209,7 +210,7 @@ def home(request):
 
         return render(request, "users/tutor/tutor_home.html", {
             'session_group':_requests,
-            'credit_user':credit_user
+            'credit_user':user
             })
 
 @login_required
@@ -238,11 +239,12 @@ def upcoming(request):
 
 @login_required
 def pending(request):
-    sessions = Sessions.objects.filter(is_accepted = False)
-    sessions2 = sessions.filter(user=user)
+    user = request.user
+
+    sessions = Sessions.objects.filter(is_accepted = False, user=user)
     return render(request, "users/tutee/pending.html", {
-        'session_group':sessions2, 
-        'credit_user':request.user
+        'session_group':sessions, 
+        'credit_user':user
         })
 
 @login_required
@@ -332,7 +334,7 @@ def end_session(request, session_id):
 
 # In the POV of the TUTOR
 @login_required
-def start_session(request, session_id):
+def complete_session(request, session_id):
     user=request.user
 
     new_session = Sessions.objects.get(id=session_id)
@@ -340,8 +342,6 @@ def start_session(request, session_id):
 
     new_user = new_session.user
     new_tutor = done.tutor
-
-    # transaction = Transaction.objects.create(user=new_user, tutor=new_tutor, amount=500, credits=-500)
 
     new_id = new_session.id
     new_grade = new_session.grade
@@ -355,10 +355,29 @@ def start_session(request, session_id):
             new_location = 'Test'
             new_session_date = request.POST.get('date')
             new_time_start = request.POST.get('start_time')
+            new_time_end = request.POST.get('end_time')
 
-            messages.success(request, f'Session has started!')
+            if new_time_end <= new_time_start:
+                raise Exception("Invalid time range")
 
-            Sessions_Ended.objects.create(session_id=new_id, user=new_user, grade=new_grade, subject=new_subject, time_start=new_time_start, time_end=None, session_date=new_session_date, location=new_location, tutor=new_tutor)
+            if new_session_date is None or new_time_start is None or new_time_end is None:
+                raise Exception("Unfilled form fields")
+
+            messages.success(request, f'Session has been completed!')
+
+            completed = Sessions_Ended.objects.create(
+                session_id=new_id, 
+                user=new_user, 
+                grade=new_grade, 
+                subject=new_subject, 
+                time_start=new_time_start, 
+                time_end=new_time_end, 
+                session_date=new_session_date, 
+                location=new_location, 
+                tutor=new_tutor,
+                with_tutee=True
+            )
+
             new_session.delete()
             return redirect('home')
         except Exception as ex:
@@ -367,9 +386,123 @@ def start_session(request, session_id):
             print(message)
             messages.error(request, 'Error: please input valid values for each field')
 
-    return render(request, "users/tutor/start_session.html", {
+    return render(request, "users/tutor/complete_session.html", {
         'session' : done,
-        'credit_user': user})
+        'credit_user': user
+    })
+
+@login_required
+def unconfirmed(request):
+    user = request.user
+
+    sessions = Sessions_Ended.objects.filter(unconfirmed=True)
+    if user.is_tutee:
+        sessions = sessions.filter(user=user, with_tutee=True)
+    else:
+        sessions = sessions.filter(tutor=user, with_tutee=False)
+
+    context = {
+        'session_group':sessions, 
+        'credit_user':user
+    }
+
+    if user.is_tutee:
+        return render(request, "users/tutee/unconfirmed.html", context)
+
+    return render(request, "users/tutor/unconfirmed.html", context)
+
+@login_required
+def unconfirmed_edit(request, session_id):
+    user=request.user
+
+    if user.is_tutee:
+        return redirect('home')
+
+    if not Sessions_Ended.objects.filter(pk=session_id).exists():
+        messages.error(request, 'Error: this session does not exist!')
+        return redirect('home')
+
+    session = Sessions_Ended.objects.get(pk=session_id)
+
+    if session.final or not session.unconfirmed:
+        messages.error(request, 'Error: this session is already confirmed!')
+        return redirect('home')
+
+    if (request.method == 'POST'):
+        try:
+            new_session_date = request.POST.get('date')
+            new_time_start = request.POST.get('start_time')
+            new_time_end = request.POST.get('end_time')
+
+            if new_time_end <= new_time_start:
+                raise Exception("Invalid time range")
+
+            if new_session_date is None or new_time_start is None or new_time_end is None:
+                raise Exception("Unfilled form fields")
+
+
+            session.session_date = new_session_date
+            session.time_start = new_time_start
+            session.time_end = new_time_end
+            session.unconfirmed = True
+            session.with_tutee = True
+
+            session.save()
+
+            messages.success(request, f'Session has been edited!')
+
+            return redirect('home')
+        except Exception as ex:
+            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+            message = template.format(type(ex).__name__, ex.args)
+            print(message)
+            messages.error(request, ex.args[0])
+
+    return render(request, "users/tutor/edit_session.html", {
+        'session' : session,
+        'credit_user': user,
+        'curr_date': session.session_date,
+        'curr_start': session.time_start,
+        'curr_end': session.time_end
+    })
+
+@login_required
+def unconfirmed_status(request, session_id, status):
+    user = request.user
+
+    if not user.is_tutee:
+        return redirect('home')
+
+    if not Sessions_Ended.objects.filter(pk=session_id).exists():
+        messages.error(request, 'Session does not exist.')
+        return redirect('home')
+
+    session = Sessions_Ended.objects.get(pk=session_id)
+
+    if status == 'confirm':
+        session.unconfirmed = False
+        session.final = True
+        session.with_tutee = True
+        session.save()
+
+        minutes = session.minutes
+        amount = get_amount_from_minutes(minutes)
+
+        if not Payment.objects.filter(session=session).exists():
+            Payment.objects.create(tutee=user, session=session, amount=amount)
+
+        messages.success(request, 'Session has been confirmed! Please pay the necessary amount.')
+
+        return redirect('transactions')
+
+    elif status == 'decline':
+        session.unconfirmed = True
+        session.with_tutee = False
+        session.save()
+
+        messages.info(request, 'Session has been declined. Please wait until your tutor has corrected the details.')
+
+    return redirect('home')
 
 @login_required
 def confirm_session(request):
@@ -381,10 +514,10 @@ def confirm_session(request):
         if(new_code is not None):
             new_code.delete()
             user.credits = user.credits + 1
-            return redirect('home')
         else:
             messages.error(request, 'Error please input a valid code')
-            return redirect('home')
+
+        return redirect('home')
     except Exception as ex:
         template = "An exception of type {0} occurred. Arguments:\n{1!r}"
         message = template.format(type(ex).__name__, ex.args)
@@ -493,6 +626,8 @@ def pay_balance(request):
 @login_required
 def history(request):
     user=request.user
+    sessions = Sessions.objects.filter(is_accepted = False, user=user)
+
     context = {
         'session_group':sessions,
         'credit_user':user
