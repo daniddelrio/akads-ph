@@ -1,6 +1,7 @@
 from django import template
 from django.db.models import Sum
 from users.models import Transaction
+from users.services import get_amount_from_minutes
 
 register = template.Library()
 
@@ -14,3 +15,8 @@ def payment_left(user, payment):
 	amount_needed = payment.amount - current_amount
 
 	return amount_needed
+
+@register.simple_tag
+def get_amount(minutes):
+    return get_amount_from_minutes(minutes)
+
