@@ -79,10 +79,16 @@ class Sessions_Ended(models.Model):
     grade = models.IntegerField()
     subject = models.CharField(max_length=20)
     time_start = models.TimeField()
-    time_end = models.TimeField(blank=True, null=True)
+    time_end = models.TimeField()
     session_date = models.DateField()
     location = models.CharField(max_length=50)
     tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "tutor2")
+    # When the session is confirmed and the details are final
+    final = models.BooleanField(default=False)
+    # Whether the session is unconfirmed (to see if it appears on the Unconfirmed Sessions page)
+    unconfirmed = models.BooleanField(default=True)
+    # Whether the session is "with" the tutee or not, i.e. whether the unconfirmed session will appear on the tutor's side or tutee's
+    with_tutee = models.BooleanField(default=True)
 
     def __str__(self):
         return self.user.username
@@ -94,7 +100,7 @@ class Sessions_Ended(models.Model):
             time_start = timedelta(hours=self.time_start.hour, minutes=self.time_start.minute)
             time_end = timedelta(hours=self.time_end.hour, minutes=self.time_end.minute)
             duration = time_end - time_start
-            duration_in_s = duration.total_seconds()    
+            duration_in_s = duration.total_seconds()
             return divmod(duration_in_s, 60)[0]
 
         return 0
