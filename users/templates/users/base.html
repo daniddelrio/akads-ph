@@ -12,6 +12,7 @@
     {% load static %}
     {% load navbar_sessions %}
     {% sessions_acc request.user as sessions_acc %}
+    {% sessions_unconfirmed request.user as sessions_unconfirmed %}
     <link rel="stylesheet" type="text/css" href="{% static 'users/css/materialize.css' %}" media="screen,projection">
     <link rel="stylesheet" type="text/css" href="{% static 'users/css/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'users/css/simple-calendar.css' %}">
@@ -30,8 +31,11 @@
       <li><a class="akads-dark-blue-text" href="{% url 'upcoming' %}">UPCOMING</a></li>
       {% endif %}
 
-      {% if user.is_tutee %}
       <li><a class="akads-dark-blue-text" href="{% url 'pending' %}">PENDING</a></li>
+      {% if sessions_unconfirmed|length > 0 %}
+        <li><a class="akads-dark-blue-text" href="{% url 'unconfirmed' %}">UNCONFIRMED<span id="upc-badge" class="badge">{{ sessions_unconfirmed|length }}</span></a></li>
+      {% else %}
+        <li><a class="akads-dark-blue-text" href="{% url 'unconfirmed' %}">UNCONFIRMED</a></li>
       {% endif %}
       <li><a class="akads-dark-blue-text" href="{% url 'history' %}">HISTORY</a></li>
     </ul>
@@ -49,11 +53,13 @@
           {% if user.is_tutee %}
             <ul id="nav-mobile" class="left hide-on-med-and-down">
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'home' %}">HOME</a></li>
-              {% if sessions_acc|length > 0 %}
-              <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS<span class="new badge akads-blue" data-badge-caption="">{{ sessions_acc|length }}</span></a></li>
+              {% with sessions_unconfirmed|length as unconfirmed %}
+              {% if sessions_acc|length|add:unconfirmed > 0 %}
+              <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS<span class="new badge akads-blue" data-badge-caption="">{{ sessions_acc|length|add:unconfirmed }}</span></a></li>
               {% else %}
               <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS</a></li>
               {% endif %}
+              {% endwith %}
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'transactions' %}">TRANSACTIONS</a></li>
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'profile' %}">SETTINGS</a></li>
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'logout' %}">SIGN OUT</a></li>
@@ -61,11 +67,13 @@
           {% else %}
             <ul id="nav-mobile" class="left hide-on-med-and-down">
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'home' %}">HOME</a></li>
-              {% if sessions_acc|length > 0 %}
-              <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS<span class="new badge akads-blue" data-badge-caption="">{{ sessions_acc|length }}</span></a></li>
+              {% with sessions_unconfirmed|length as unconfirmed %}
+              {% if sessions_acc|length|add:unconfirmed > 0 %}
+              <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS<span class="new badge akads-blue" data-badge-caption="">{{ sessions_acc|length|add:unconfirmed }}</span></a></li>
               {% else %}
               <li><a class='dropdown-trigger akads-dark-blue-text nav-item nav-link' href='#!' data-target='dropdown1'>SESSIONS</a></li>
               {% endif %}
+              {% endwith %}
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'profile' %}">SETTINGS</a></li>
               <li><a class="akads-dark-blue-text nav-item nav-link" href="{% url 'logout' %}">SIGN OUT</a></li>
             </ul>
@@ -118,7 +126,6 @@
       </div>
     </footer>
     
-    
     <script type="text/javascript" src="{% static 'users/js/jquery-3.4.1.js' %}"></script>
     <script type="text/javascript" src="{% static 'users/js/script.js' %}"></script>
     <script type="text/javascript" src="{% static 'users/js/materialize.js' %}"></script>
@@ -128,5 +135,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBpUPxddlvEtS4epVtpNTl3Pj4TDForcF0&callback=initMap"
     async defer></script>
+
+    {% block scripts %}
+    {% endblock %}
   </body>
 </html>
