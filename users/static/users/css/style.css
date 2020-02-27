@@ -210,6 +210,10 @@ strong {
   padding-bottom: 10px;
 }
 
+.card-panel.upcoming.complete_session .valign-wrapper {
+  justify-content: center;
+}
+
 .card-panel.upcoming ul {
   margin-top: 0;
 }
@@ -220,6 +224,13 @@ strong {
 
 .card-panel.upcoming i {
   padding: 0 10px 0 0;
+}
+
+.complete_session_time {
+  height: 18rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
 }
 
 .card-panel.pending {
@@ -408,6 +419,11 @@ span.badge {
 #btn-cancel {
   background: red;
   margin-top:40px;
+}
+
+#btn-decline {
+  background: red;
+  margin-top: 10px;
 }
 
 .datepicker {

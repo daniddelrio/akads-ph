@@ -6,38 +6,39 @@
 
 {%block content%}
   <div class="container user" id='map-check' stat='tutor'>
-    <h4 class="akads-dark-blue-text">Start Session</h4>
+    <h4 class="akads-dark-blue-text">Complete Session</h4>
     <form method="POST">
     {% csrf_token %}
-      <div class="card-panel upcoming">
+      <div class="card-panel upcoming complete_session">
         <div class="valign-wrapper">
           <i class="medium material-icons akads-mid-blue-text">account_circle</i>
           <h5 class="akads-dark-blue-text"><strong>Tutee:</strong> {{session.tutee.first_name}} {{session.tutee.last_name}}</h5>
         </div>
         <div class="row">
-          <div class="col s5">
+          <div class="col s6">
             <div align="center">
               <label>Select Date</label>
               <div id="book-date" type="text"
                 class="datepicker-here"
-                data-language='en'
-                data-multiple-dates="true"
-                data-multiple-dates-separator=","></div>
+                data-language='en'></div>
               <input id="hidden-date" class="hidden" type="text" name="date">
             </div>
             <br>
+          </div>
+          <div class="col s6 complete_session_time">
             <div align="center">
-              <label>Starting Time</label>
+              <label>Start Time</label>
               <input type="text" name="start_time" class="timepicker">
             </div>
-            <br>
-            <div class="akads-dark-blue-text center-align">
-              <button class = "btn akads-blue waves-effect waves-light" type="submit">Start Session</button>
+            <div align="center">
+              <label>End Time</label>
+              <input type="text" name="end_time" class="timepicker">
             </div>
+            <br>
           </div>
-          <div class="col s5 map">
-            <div id="mapsession{{ session.session.id }}" location="{{session.session.location}}"></div>
-          </div>
+        </div>
+        <div class="akads-dark-blue-text center-align">
+          <button class = "btn akads-blue waves-effect waves-light" type="submit">Complete Session</button>
         </div>
       </div>
     </form>

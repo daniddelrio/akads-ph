@@ -1,0 +1,44 @@
+{% extends "../base.html"%}
+
+{% block body %}
+<body>
+{% endblock %}
+
+{%block content%}
+  {% load payment_left %}
+  <div>
+    <h4 class="akads-dark-blue-text">Unconfirmed Sessions</h4>
+    <p class="akads-dark-blue-text">Sessions that your tutor has completed but have not been confirmed by the tutee will be listed here. <br>
+    If you see wrong details on a session, click Decline so that the tutor can correct the details.</p>
+    <div class="container pending">
+      {% if session_group %}
+      {% for individual_session in session_group %}
+
+        <div class="card-panel pending akads-light-blue">
+          <div class="row">
+            <div class="col s8">
+              <div class="akads-dark-blue-text" id="pending-text"><strong>Date:</strong> {{individual_session.session_date}}</div>
+              <div class="akads-dark-blue-text" id="pending-text"><strong>Time:</strong> {{individual_session.time_start}} - {{individual_session.time_end}}</div>
+              <div class="akads-dark-blue-text" id="pending-text"><strong>Subject:</strong> Grade {{individual_session.grade}} {{individual_session.subject}}</div>
+              <div class="akads-dark-blue-text" id="pending-text"><strong>Amount:</strong> PHP {% get_amount individual_session.minutes %}</div>
+            </div>
+            <div class="col s4">
+              <div class="akads-dark-blue-text" ><strong>Tutor: </strong>{{individual_session.tutor}}</div>
+              <br>
+              <div>
+                <a class="btn waves-effect waves-light" id="btn-small" href="unconfirmed/{{individual_session.pk}}/confirm">CONFIRM</a>
+                <a class="btn waves-effect waves-light" id="btn-decline" href="unconfirmed/{{individual_session.pk}}/decline">DECLINE</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+      {% else %}
+        <p class="akads-mid-blue-text">Unconfirmed sessions will be listed here.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock content %}
+
+
+
