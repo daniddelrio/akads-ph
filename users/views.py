@@ -12,7 +12,6 @@ from django.db.models import Q, Sum
 from .services import *
 from .forms import *
 import datetime
-from .emailing import send_confirmed_session
 
 def register_tutee(request):
     if (request.method == 'POST'):
@@ -272,9 +271,9 @@ def home(request):
                 new_dates = new_date.split(",")
                 credit_cost = len(new_dates) * int(new_hours)
 
-                # if user.credits < credit_cost:
-                #     plurality = 's' if credit_cost > 1 else ''
-                #     messages.error(request, f"You don't have enough credits! (You need {credit_cost} credit{plurality})")
+                if user.credits < credit_cost:
+                    plurality = 's' if credit_cost > 1 else ''
+                    messages.error(request, f"You don't have enough credits! (You need {credit_cost} credit{plurality})")
 
                 try:
                     for _date in new_dates:
@@ -519,7 +518,7 @@ def complete_session(request, session_id):
             if new_session_date is None or new_time_start is None or new_time_end is None:
                 raise Exception("Unfilled form fields")
 
-            messages.success(request, f'Session has been completed! Please have your tutor confirm the session.')
+            messages.success(request, f'Session has been completed!')
 
             completed = Sessions_Ended.objects.create(
                 session_id=new_id, 
@@ -605,7 +604,7 @@ def unconfirmed_edit(request, session_id):
 
             session.save()
 
-            messages.success(request, f'Session has been edited! Please have your tutor confirm the session.')
+            messages.success(request, f'Session has been edited!')
 
             return redirect('home')
         except Exception as ex:
@@ -646,8 +645,6 @@ def unconfirmed_status(request, session_id, status):
 
         if not Payment.objects.filter(session=session).exists():
             Payment.objects.create(tutee=user, session=session, amount=amount)
-
-        send_confirmed_session(session, amount)
 
         messages.success(request, 'Session has been confirmed! Please pay the necessary amount.')
 
