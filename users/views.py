@@ -151,9 +151,7 @@ def home(request):
                 new_hours = request.POST.get('hours')
                 new_subject = request.POST.get('subject')
                 new_end = request.POST.get('end_time')
-                new_sched = ""
-                for s in sched:
-                    new_sched += s + " "
+                new_sched = " ".join(sched)
                     
                 print(new_sched)
 
@@ -237,6 +235,15 @@ def home(request):
             'session_group':_requests,
             'credit_user':user
             })
+
+def mutualSched(request, session_id):
+    session = Sessions.objects.get(id = session_id)
+    stringSched = session.session_schedule
+    arraySched = stringSched.split()
+    print(arraySched)
+    form = MutualScheduleForm()
+    context = {'form': form, 'session':session }
+    return render(request,"mutual_sched.html", context)
 
 @login_required
 def upcoming(request):

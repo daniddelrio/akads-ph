@@ -63,7 +63,7 @@ class Sessions(models.Model):
     code = models.CharField(max_length=5)
     is_accepted = models.BooleanField(default=False)
 
-    session_schedule = models.CharField(max_length = 500)
+    session_schedule = models.CharField(max_length = 700)
 
     
     def __str__(self):
@@ -73,7 +73,7 @@ class Sessions_Accepted(models.Model):
     session = models.ForeignKey(Sessions, on_delete=models.CASCADE, related_name = "sessions1")
     tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "tutor1")
     tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "tutee2")
-
+    session_mutual = models.CharField(max_length = 700)
     def __str__(self):
         return self.tutee.username
 

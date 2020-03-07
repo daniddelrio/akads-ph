@@ -47,4 +47,5 @@ urlpatterns = [
     path('home/profile/password', user_views.edit_password, name='edit_password'),
     path('home/profile/location', user_views.edit_location, name='edit_location'),
     path('home/profile/card', user_views.edit_card, name='edit_card'),
+    path('home/int:session_id>/mutual',user_views.mutualSched, name='mutual_schedule')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,17 @@
+{% extends "../base.html"%}
+
+{% block body %}
+<body>
+{% endblock %}
+{%block content%}
+{% load static %}
+
+{% csrf_token %}
+<form method = "POST">
+{{form}}
+<button class =  "btn akads-blue waves-effect waves-light" type="submit" href = "{{individual_session.session.id}}/accepted">Confirm Session</button>
+</form>
+
+
+
+{% endblock content %}
