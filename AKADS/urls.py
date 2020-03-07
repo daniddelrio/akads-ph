@@ -24,7 +24,7 @@ from django.conf.urls import url
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', user_views.landing, name='landing'),
-    path('booking', user_views.home, name='booking'),
+    path('booking', user_views.booking, name='booking'),
     path('register/', user_views.tutor_tutee, name='register'),
     path('register/tutor/', user_views.register_tutor, name='register-tutor'),
     path('register/tutee/', user_views.register_tutee, name='register-tutee'),
@@ -47,5 +47,4 @@ urlpatterns = [
     path('home/profile/password', user_views.edit_password, name='edit_password'),
     path('home/profile/location', user_views.edit_location, name='edit_location'),
     path('home/profile/card', user_views.edit_card, name='edit_card'),
-    path('home/int:session_id>/mutual',user_views.mutualSched, name='mutual_schedule')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
