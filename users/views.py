@@ -499,7 +499,6 @@ def complete_session(request, session_id):
     new_user = new_session.user
     new_tutor = done.tutor
 
-    new_id = new_session.id
     new_grade = new_session.grade
     new_subject = new_session.subject
     new_time_end = new_session.time_end
@@ -522,7 +521,6 @@ def complete_session(request, session_id):
             messages.success(request, f'Session has been completed! Please have your tutor confirm the session.')
 
             completed = Sessions_Ended.objects.create(
-                session_id=new_id, 
                 user=new_user, 
                 grade=new_grade, 
                 subject=new_subject, 
