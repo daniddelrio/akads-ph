@@ -6,10 +6,18 @@
 {%block content%}
 {% load static %}
 
-{% csrf_token %}
+
 <form method = "POST">
-{{form}}
-<button class =  "btn akads-blue waves-effect waves-light" type="submit" href = "{{individual_session.session.id}}/accepted">Confirm Session</button>
+    {% csrf_token %}
+    {% for choice in form.session_mutual.field.choices %}
+    <label for = "{{ form.session_mutual.field.label }}_{{ forloop.counter0 }}">
+      <input id = "{{ form.session_mutual.field.label }}_{{ forloop.counter0 }}" type = "checkbox" value = "{{ choice.1 }}" name = "{{ form.session_mutual.name }}">
+      <span>
+      {{ choice.0 }}
+      </span>
+    </label><br/>
+    {% endfor %}
+<button class =  "btn akads-blue waves-effect waves-light" type="submit">Confirm Session</button>
 </form>
 
 

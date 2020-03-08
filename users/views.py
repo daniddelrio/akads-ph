@@ -13,6 +13,34 @@ from .services import *
 from .forms import *
 import datetime
 
+
+SCHED_CHOICES = {
+    "sevenToHalf": "7to730",
+    "halfToEight" : "730to8",
+    "eightToHalf" : "8to830",
+    "halfToNine": "830to9",
+    "nineToHalf" :"9to930" ,  
+    "halfToTen" : "930to10" ,      
+    "tenToHalf" : "10to1030" ,      
+    "halfToEleven" : "1030to11",   
+    "elevenToHalf" : "11to1130" ,   
+    "halfToTwelve":"1130to12" ,   
+    "twelveToHalf" : "12to1230" ,   
+    "halfToThirteen" : "1230to13" , 
+    "thirteenToHalf" : "13to1330", 
+    "halfToFourteen" : "1330to14", 
+    "fourteenToHalf" : "14to1430", 
+    "halfToFifteen" : "1430to15",  
+    "fifteenToHalf" : "15to1530",  
+    "halfToSixteen" : "1530to16",  
+    "sixteenToHalf":"16to1630",
+    "halfToSevenTeen" : "1630to17",
+    "seventeenToHalf" : "17to1730",
+    "halfToEighteen" : "1730to18", 
+    "eighteenToHalf" : "18to1830", 
+    "halfToNineteen" : "1830to19",
+}
+
 def register_tutee(request):
     if (request.method == 'POST'):
         try:
@@ -162,9 +190,9 @@ def home(request):
                 new_dates = new_date.split(",")
                 credit_cost = len(new_dates) * int(new_hours)
 
-                if user.credits < credit_cost:
-                    plurality = 's' if credit_cost > 1 else ''
-                    messages.error(request, f"You don't have enough credits! (You need {credit_cost} credit{plurality})")
+                # if user.credits < credit_cost:
+                #     plurality = 's' if credit_cost > 1 else ''
+                #     messages.error(request, f"You don't have enough credits! (You need {credit_cost} credit{plurality})")
 
                 try:
                     for _date in new_dates:
@@ -288,28 +316,39 @@ def cancel_pending(request, session_id):
 
 @login_required
 def accept_tutee(request, session_id):
-    user = request.user
-    current_user = User.objects.get(id=user.id)
-    chosen_session = Sessions.objects.get(id=session_id)
-    chosen_sessions = Sessions.objects.filter(code=chosen_session.code)
-    tutee = chosen_session.user
+    if(request.method == "POST"):
+        user = request.user
+        current_user = User.objects.get(id=user.id)
+        chosen_session = Sessions.objects.get(id=session_id)
+        chosen_sessions = Sessions.objects.filter(code=chosen_session.code)
+        tutee = chosen_session.user
 
-    for _session in chosen_sessions:
-        _session.is_accepted = True
-        _session.save()
+        for _session in chosen_sessions:
+            _session.is_accepted = True
+            _session.save()
 
-    chosen_request = Requests.objects.filter(session=chosen_session)
-    for x in chosen_request:
-        x.is_rejected = True
-        x.save()
+        chosen_request = Requests.objects.filter(session=chosen_session)
+        for x in chosen_request:
+            x.is_rejected = True
+            x.save()
 
-    new_tutor = current_user
-    new_tutee = tutee
+        new_tutor = current_user
+        new_tutee = tutee
 
-    for _session in chosen_sessions:
-        foo = Sessions_Accepted.objects.create(session=_session, tutor=new_tutor, tutee=new_tutee)
-
-    return redirect('home')
+        for _session in chosen_sessions:
+            foo = Sessions_Accepted.objects.create(session=_session, tutor=new_tutor, tutee=new_tutee)
+        return redirect('home')
+    else:
+        current_session = Sessions.objects.get(id = session_id)
+        stringSched = current_session.session_schedule
+        arraySched = stringSched.split()
+        schedlist = []
+        print(arraySched)
+        for sched in arraySched:
+            schedlist.append((SCHED_CHOICES[sched], sched) )
+        print(schedlist)
+        form = MutualScheduleForm(sched_choices = schedlist)
+        return render(request, "users/tutor/mutual_sched.html", {"form": form,})
 
 @login_required
 def delete_request(request, session_id):
