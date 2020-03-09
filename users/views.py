@@ -264,14 +264,14 @@ def home(request):
             'credit_user':user
             })
 
-def mutualSched(request, session_id):
-    session = Sessions.objects.get(id = session_id)
-    stringSched = session.session_schedule
-    arraySched = stringSched.split()
-    print(arraySched)
-    form = MutualScheduleForm()
-    context = {'form': form, 'session':session }
-    return render(request,"mutual_sched.html", context)
+# def mutualSched(request, session_id):
+#     session = Sessions.objects.get(id = session_id)
+#     stringSched = session.session_schedule
+#     arraySched = stringSched.split()
+#     print(arraySched)
+#     form = MutualScheduleForm()
+#     context = {'form': form, 'session':session }
+#     return render(request,"mutual_sched.html", context)
 
 @login_required
 def upcoming(request):
@@ -340,12 +340,9 @@ def accept_tutee(request, session_id):
         return redirect('home')
     else:
         current_session = Sessions.objects.get(id = session_id)
-        stringSched = current_session.session_schedule
-        arraySched = stringSched.split()
-        schedlist = []
-        print(arraySched)
-        for sched in arraySched:
-            schedlist.append((SCHED_CHOICES[sched], sched) )
+        string_sched = current_session.session_schedule
+        array_sched = string_sched.split()
+        schedlist = [(SCHED_CHOICES[sched], sched) for sched in array_sched]
         print(schedlist)
         form = MutualScheduleForm(sched_choices = schedlist)
         return render(request, "users/tutor/mutual_sched.html", {"form": form,})
