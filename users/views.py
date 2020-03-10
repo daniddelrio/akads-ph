@@ -12,6 +12,7 @@ from django.db.models import Q, Sum
 from .services import *
 from .forms import *
 import datetime
+from django.conf import settings
 
 
 SCHED_CHOICES = {
@@ -292,6 +293,8 @@ def home(request):
                 new_subject = request.POST.get('subject')
                 new_end = request.POST.get('end_time')
 
+                new_start = datetime.datetime.strptime(new_start, settings.TIME_INPUT_FORMATS[0]).time()
+
                 orders = Sessions.objects.filter(user=user)
                 new_code = get_random_string(length=5)
                 print('made it here0')
@@ -554,6 +557,9 @@ def complete_session(request, session_id):
             if new_session_date is None or new_time_start is None or new_time_end is None:
                 raise Exception("Unfilled form fields")
 
+            new_time_start = datetime.datetime.strptime(new_time_start, settings.TIME_INPUT_FORMATS[0]).time()
+            new_time_end = datetime.datetime.strptime(new_time_end, settings.TIME_INPUT_FORMATS[0]).time()
+
             messages.success(request, f'Session has been completed!')
 
             completed = Sessions_Ended.objects.create(
@@ -631,6 +637,8 @@ def unconfirmed_edit(request, session_id):
             if new_session_date is None or new_time_start is None or new_time_end is None:
                 raise Exception("Unfilled form fields")
 
+            new_time_start = datetime.datetime.strptime(new_time_start, settings.TIME_INPUT_FORMATS[0]).time()
+            new_time_end = datetime.datetime.strptime(new_time_end, settings.TIME_INPUT_FORMATS[0]).time()
 
             session.session_date = new_session_date
             session.time_start = new_time_start
@@ -653,8 +661,8 @@ def unconfirmed_edit(request, session_id):
         'session' : session,
         'credit_user': user,
         'curr_date': session.session_date,
-        'curr_start': session.time_start,
-        'curr_end': session.time_end
+        'curr_start': session.time_start.strftime(settings.TIME_INPUT_FORMATS[0]),
+        'curr_end': session.time_end.strftime(settings.TIME_INPUT_FORMATS[0])
     })
 
 @login_required
