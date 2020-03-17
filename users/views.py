@@ -946,6 +946,7 @@ def edit_card(request):
 @login_required
 def profile(request):
     user=request.user
+    loc = None
     if(user.is_tutee==True):
         user2 = Tutee.objects.get(user=user)
     else:
