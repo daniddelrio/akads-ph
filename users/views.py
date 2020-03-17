@@ -13,6 +13,7 @@ from .services import *
 from .forms import *
 import datetime
 from django.conf import settings
+from .emailing import send_confirmed_session
 
 
 SCHED_CHOICES = {
@@ -537,7 +538,6 @@ def complete_session(request, session_id):
     new_user = new_session.user
     new_tutor = done.tutor
 
-    new_id = new_session.id
     new_grade = new_session.grade
     new_subject = new_session.subject
     new_time_end = new_session.time_end
@@ -560,10 +560,9 @@ def complete_session(request, session_id):
             new_time_start = datetime.datetime.strptime(new_time_start, settings.TIME_INPUT_FORMATS[0]).time()
             new_time_end = datetime.datetime.strptime(new_time_end, settings.TIME_INPUT_FORMATS[0]).time()
 
-            messages.success(request, f'Session has been completed!')
+            messages.success(request, f'Session has been completed! Please have your tutor confirm the session.')
 
             completed = Sessions_Ended.objects.create(
-                session_id=new_id, 
                 user=new_user, 
                 grade=new_grade, 
                 subject=new_subject, 
@@ -648,7 +647,7 @@ def unconfirmed_edit(request, session_id):
 
             session.save()
 
-            messages.success(request, f'Session has been edited!')
+            messages.success(request, f'Session has been edited! Please have your tutor confirm the session.')
 
             return redirect('home')
         except Exception as ex:
@@ -689,6 +688,8 @@ def unconfirmed_status(request, session_id, status):
 
         if not Payment.objects.filter(session=session).exists():
             Payment.objects.create(tutee=user, session=session, amount=amount)
+
+        send_confirmed_session(session, amount)
 
         messages.success(request, 'Session has been confirmed! Please pay the necessary amount.')
 

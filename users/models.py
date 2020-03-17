@@ -139,7 +139,6 @@ class Sessions_Accepted(models.Model):
         return self.tutee.username
 
 class Sessions_Ended(models.Model):
-    session_id = models.IntegerField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "sessions_ended")
     grade = models.IntegerField()
     subject = models.CharField(max_length=20)
