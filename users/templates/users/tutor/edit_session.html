@@ -23,7 +23,10 @@
               <div id="book-date" type="text"
                 class="datepicker-here"
                 data-language='en'
-                defaultDate="{{curr_date}}"></div>
+                defaultDate="{{curr_date}}"
+                setDefaultDate="true"
+                format="mmmm d, yyyy"
+                ></div>
               <input id="hidden-date" class="hidden" type="text" name="date">
             </div>
             <br>
@@ -50,13 +53,14 @@
 
 {% block scripts %}
 <script type="text/javascript">
-  console.log("{{curr_start.isoformat}}");
-  console.log("{{curr_end.isoformat}}");
+  console.log("{{curr_start}}");
+  console.log("{{curr_end}}");
+  console.log("{{curr_date}}");
 
   // My attempt to set a default time
   const time_start = document.getElementById('start_timepicker');
   const timeInstance = M.Timepicker.init(time_start, {
-      defaultTime: "{{curr_start.isoformat}}"
+      defaultTime: "{{curr_start}}"
   });
 
 
@@ -66,7 +70,7 @@
 
   const time_end = document.getElementById('end_timepicker');
   const timeInstanceEnd = M.Timepicker.init(time_end, {
-      defaultTime: "{{curr_end.isoformat}}"
+      defaultTime: "{{curr_end}}"
   });
 
   // forces materialize time picker to display default time in input
@@ -74,6 +78,21 @@
   timeInstanceEnd.done();
 
   // My attempt to set a default date for the datepicker
+  
+  // const date = document.getElementById('book-date');
+  // const dateInstance = M.Datepicker.init(date, {
+  //     defaultDate: "{{curr_date}}",
+  //     setDefaultDate: true,
+  //     format: "mmmm d, yyyy"
+  // });
+
+  // console.log($('.datepicker-here').datepicker());
+  // console.log(dateInstance);
+
+  // forces materialize time picker to display default time in input
+  // dateInstance._updateTimeFromInput();
+  // dateInstance.done();
+
 
   // $(document).ready(function() {
   //   var date = "2020-02-20"

@@ -163,6 +163,10 @@ class Sessions_Ended(models.Model):
             from datetime import timedelta
             time_start = timedelta(hours=self.time_start.hour, minutes=self.time_start.minute)
             time_end = timedelta(hours=self.time_end.hour, minutes=self.time_end.minute)
+
+            if time_start >= time_end:
+                time_end += timedelta(hours=24)
+
             duration = time_end - time_start
             duration_in_s = duration.total_seconds()
             return divmod(duration_in_s, 60)[0]
