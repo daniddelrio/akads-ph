@@ -7,6 +7,8 @@
 {%block content%}
   <div class="container user" id='map-check' stat='tutor'>
     <h4 class="akads-dark-blue-text">Upcoming</h4>
+    <strong class="akads-mid-blue-text">Below are the details of your upcoming sessions.</strong>
+    
     {% load static %}
     {% if session_group %}
     {% for individual_session in session_group %}
@@ -31,7 +33,7 @@
       </div>
     {% endfor %}
     {% else %}
-      <p class="akads-mid-blue-text">Upcoming sessions will be listed here</p>
+      <p class="akads-mid-blue-text">You have no upcoming sessions.</p>
     {% endif %}
   </div>
 {% endblock content %}
