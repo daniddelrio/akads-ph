@@ -299,7 +299,6 @@ def home(request):
 
                 orders = Sessions.objects.filter(user=user)
                 new_code = get_random_string(length=5)
-                print('made it here0')
                 
                 new_dates = new_date.split(",")
                 credit_cost = len(new_dates) * int(new_hours)
@@ -379,18 +378,6 @@ def home(request):
             'form': form
             })
     else:
-        if(request.method == 'POST'):
-            _sessions = Sessions.objects.filter(code=request.POST.get('code'))
-            if len(_sessions) == 0:
-                messages.error(request, "You entered an invalid code")
-            else:
-                _credits = 0
-                for _session in _sessions:
-                    _credits += _session.hours
-                messages.error(request, f"{_credits} credits redeemed!")
-                user.credits += _credits
-                user.save()
-                _sessions.delete()
         # Get multiple dates per request (if multiple)
         _requests = Requests.objects.filter(is_rejected = False, user=user)
         for _request in _requests:
@@ -705,27 +692,6 @@ def unconfirmed_status(request, session_id, status):
         messages.info(request, 'Session has been declined. Please wait until your tutor has corrected the details.')
 
     return redirect('home')
-
-@login_required
-def confirm_session(request):
-    try:
-        user=request.user
-        code_input = request.POST.get('code')
-        new_code = Sessions.objects.get(code=code_input)
-
-        if(new_code is not None):
-            new_code.delete()
-            user.credits = user.credits + 1
-        else:
-            messages.error(request, 'Error please input a valid code')
-
-        return redirect('home')
-    except Exception as ex:
-        template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-        message = template.format(type(ex).__name__, ex.args)
-        print(message)
-        messages.error(request, 'Error please input a valid code')
-        return redirect('home')
 
 # Shows both transactions and payments needed
 @login_required
