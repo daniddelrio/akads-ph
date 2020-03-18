@@ -63,11 +63,10 @@ def register_tutee(request):
             new_cardnum = request.POST.get('cardnum')
             new_fullname = request.POST.get('fullname')
             new_expiry_date = request.POST.get('expiry_date')
-            new_seccode = request.POST.get('seccode')
             if(password1 == password2):
                 new_password = request.POST.get('password1')
                 user = User.objects.create_user(username=new_username, first_name=new_firstname, last_name=new_lastname, password=new_password, email=new_email, is_tutee=True)
-                tutee = Tutee.objects.create(user=user, housenum=new_housenum, province=new_province, city=new_city, barangay=new_barangay, cellnum=new_cellnum, birthday=new_birthday, sex=new_sex, bio=new_bio, cardnum=new_cardnum, fullname=new_fullname, expiry_date=new_expiry_date, seccode=new_seccode)
+                tutee = Tutee.objects.create(user=user, housenum=new_housenum, province=new_province, city=new_city, barangay=new_barangay, cellnum=new_cellnum, birthday=new_birthday, sex=new_sex, bio=new_bio, cardnum=new_cardnum, fullname=new_fullname, expiry_date=new_expiry_date)
                 messages.success(request, f'Account created!')
                 return render(request, "users/tutee/registertutee.html")
             else:
@@ -543,7 +542,7 @@ def complete_session(request, session_id):
             if new_time_end <= new_time_start:
                 raise Exception("Invalid time range")
 
-            if new_session_date is None or new_time_start is None or new_time_end is None:
+            if new_session_date == '' or new_time_start is None or new_time_end is None:
                 raise Exception("Unfilled form fields")
 
             new_time_start = datetime.datetime.strptime(new_time_start, settings.TIME_INPUT_FORMATS[0]).time()
@@ -569,7 +568,7 @@ def complete_session(request, session_id):
             template = "An exception of type {0} occurred. Arguments:\n{1!r}"
             message = template.format(type(ex).__name__, ex.args)
             print(message)
-            messages.error(request, 'Error: please input valid values for each field')
+            messages.error(request, 'Error: please input valid values for each field: {}'.format(ex.args[0]))
 
     return render(request, "users/tutor/complete_session.html", {
         'session' : done,
@@ -893,12 +892,10 @@ def edit_card(request):
             new_cardnum = request.POST.get('cardnum')
             new_fullname = request.POST.get('fullname')
             new_expiry_date = request.POST.get('expiry_date')
-            new_seccode = request.POST.get('seccode')
 
             tutee.cardnum = new_cardnum
             tutee.fullname = new_fullname
             tutee.expiry_month = new_expiry_date
-            tutee.seccode = new_seccode
 
             tutee.save()
             return redirect('profile')

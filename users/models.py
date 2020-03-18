@@ -37,7 +37,6 @@ class Tutee(models.Model):
     cardnum = models.CharField(max_length=16)
     fullname = models.CharField(max_length=30)
     expiry_date = models.CharField(max_length=7)
-    seccode = models.IntegerField()
 
     def __str__(self):
         return self.user.username
