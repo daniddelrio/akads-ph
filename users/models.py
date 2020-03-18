@@ -7,6 +7,7 @@ class User(AbstractUser):
     id = models.AutoField(primary_key=True)
     is_tutee = models.BooleanField(default=False)
     credits = models.IntegerField(default=0)
+    picture = models.ImageField(upload_to='display_pics/', blank=True, null=True)
 
     def __str__(self):
         return self.username

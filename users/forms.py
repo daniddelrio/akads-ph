@@ -7,6 +7,18 @@ from django.forms import ModelForm
 
 User = get_user_model()
 
+class PictureForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(PictureForm, self).__init__(*args, **kwargs)
+        self.fields['picture'].widget.attrs={
+            'id' : 'display-pic',
+            'style': 'opacity: 0;'
+        }
+
+    class Meta:
+        model = User
+        fields = ['picture']
+
 class TuteeRegisterForm(UserCreationForm):
     email = forms.EmailField()
 
