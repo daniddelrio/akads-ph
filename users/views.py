@@ -293,6 +293,7 @@ def home(request):
                 new_hours = request.POST.get('hours')
                 new_subject = request.POST.get('subject')
                 new_end = request.POST.get('end_time')
+                new_sched = " ".join(sched)
 
                 new_start = datetime.datetime.strptime(new_start, settings.TIME_INPUT_FORMATS[0]).time()
 
@@ -318,6 +319,7 @@ def home(request):
                                                                subject=new_subject,
                                                                time_end=new_end,
                                                                session_date=_date,
+                                                               session_schedule = new_sched,
                                                                sevenToHalf = new_sched7To730,
                                                                halfToEight = new_sched730To8,
                                                                eightToHalf = new_sched8To830,

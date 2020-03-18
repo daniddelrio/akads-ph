@@ -61,6 +61,7 @@ class Sessions(models.Model):
     location = models.CharField(max_length=50)
     code = models.CharField(max_length=5)
     is_accepted = models.BooleanField(default=False)
+    session_schedule = models.CharField(max_length=700)
 
     sevenToHalf = models.BooleanField(default = False )
     halfToEight = models.BooleanField(default = False)

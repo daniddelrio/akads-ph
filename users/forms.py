@@ -76,6 +76,12 @@ class RequestScheduleForm(ModelForm):
             "halfToTwenty",   
         ]
 
+class MutualScheduleForm(forms.Form):
+    def __init__(self, sched_choices,*args, **kwargs):
+        super(MutualScheduleForm,self).__init__(*args, **kwargs)
+        self.fields["session_mutual"].choices = sched_choices
+    session_mutual = forms.MultipleChoiceField(choices=(), required = True)
+
 class tutorAvailabilitySched(ModelForm):
     sevenToHalf = forms.BooleanField(label = "7:00am - 7:30am", initial = False, required = False)
     halfToEight = forms.BooleanField(label = "7:30am - 8:00am", initial = False, required = False)
