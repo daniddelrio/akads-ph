@@ -25,17 +25,8 @@
               <li class="akads-dark-blue-text"><strong>Subject:</strong> Grade {{individual_session.session.grade}} {{individual_session.session.subject}}</li>
               <li class="akads-dark-blue-text"><strong>Location:</strong> {{individual_session.session.location}}</li>
             </ul>
-            <br>
-            <br>
-            <p class="akads-mid-blue-text">Just finished another session? Press the "View Code" button and send it to your tutor!</p>
-            <a class = "btn akads-blue waves-effect waves-light modal-trigger" href="#modal2">View Code</a>
-            <!-- <a class = "btn akads-blue waves-effect waves-light" href="{{individual_session.session.id}}/end-session">VIEW CODE</a> -->
-
-            
+            <p class="akads-mid-blue-text left-align">Please wait for your tutor to complete the session!</p>
           </div>
-          <!-- <div class="col s5 map">
-            <div id="map{{ forloop.counter }}" location="{{individual_session.session.location}}"></div>
-          </div> -->
         </div>
       </div>
     {% endfor %}
