@@ -88,11 +88,13 @@
                   </div>
                   <div id = "book-schedule">
                     <p>Set your schedule for the day:</p>
-                    {% for field in form %}
-                    <label>
-                      {{ field }}
-                      <span>{{ field.label }}</span>
-                    </label><br>
+                    {% for choice in form.session_schedule.field.choices %}
+                    <label for = "{{ form.session_schedule.field.label }}_{{ forloop.counter0 }}">
+                      <input id = "{{ form.session_schedule.field.label }}_{{ forloop.counter0 }}" type = "checkbox" value = "{{ choice.1 }}" name = "{{ form.session_schedule.name }}">
+                      <span>
+                      {{ choice.0 }}
+                      </span>
+                    </label><br/>
                     {% endfor %}
                   </div>
                 </div>

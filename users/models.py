@@ -62,70 +62,7 @@ class Sessions(models.Model):
     code = models.CharField(max_length=5)
     is_accepted = models.BooleanField(default=False)
 
-    sevenToHalf = models.BooleanField(default = False )
-    halfToEight = models.BooleanField(default = False)
-
-    eightToHalf = models.BooleanField(default = False)
-    halfToNine = models.BooleanField(default = False)
-
-    nineToHalf = models.BooleanField(default = False)
-    halfToTen = models.BooleanField(default = False)
-
-    tenToHalf = models.BooleanField(default = False)
-    halfToEleven = models.BooleanField(default = False)
-
-    elevenToHalf = models.BooleanField(default = False)
-    halfToTwelve = models.BooleanField(default = False)
-
-    twelveToHalf = models.BooleanField(default = False)
-    halfToThirteen = models.BooleanField(default = False)
-
-    thirteenToHalf = models.BooleanField(default = False)
-    halfToFourteen = models.BooleanField(default = False)
-
-    fourteenToHalf = models.BooleanField(default = False)
-    halfToFifteen = models.BooleanField(default = False)
-
-    fifteenToHalf = models.BooleanField(default = False)
-    halfToSixteen = models.BooleanField(default = False)
-
-    seventeenToHalf = models.BooleanField(default = False)
-    halfToEighteen = models.BooleanField(default = False)
-
-    eighteenToHalf = models.BooleanField(default = False)
-    halfToNineteen = models.BooleanField(default = False)
-
-    nineteenToHalf = models.BooleanField(default = False)
-    halfToTwenty = models.BooleanField(default = False)
-
-    def getSchedArray(self):
-        schedArray = [
-                self.sevenToHalf,
-                self.halfToEight,
-                self.eightToHalf,
-                self.halfToNine,
-                self.nineToHalf,  
-                self.halfToTen,      
-                self.tenToHalf,      
-                self.halfToEleven,   
-                self.elevenToHalf,   
-                self.halfToTwelve,   
-                self.twelveToHalf,   
-                self.halfToThirteen, 
-                self.thirteenToHalf, 
-                self.halfToFourteen, 
-                self.fourteenToHalf, 
-                self.halfToFifteen,  
-                self.fifteenToHalf,  
-                self.halfToSixteen,  
-                self.seventeenToHalf,
-                self.halfToEighteen, 
-                self.eighteenToHalf, 
-                self.halfToNineteen, 
-                self.nineteenToHalf, 
-                self.halfToTwenty,   
-            ]
-        return schedArray
+    session_schedule = models.CharField(max_length = 900)
     
     def __str__(self):
         return self.user.username
@@ -134,7 +71,7 @@ class Sessions_Accepted(models.Model):
     session = models.ForeignKey(Sessions, on_delete=models.CASCADE, related_name = "sessions1")
     tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "tutor1")
     tutee = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "tutee2")
-
+    session_mutual = models.CharField(max_length = 900)
     def __str__(self):
         return self.tutee.username
 
