@@ -279,7 +279,7 @@ def upcoming(request):
         tutee_now = []
         for x in sessions:
             tutee_now = Tutee.objects.get(user=x.tutee).cellnum
-
+        
         context = {
             'session_group':sessions,
             'credit_user':credit_user,
@@ -326,9 +326,12 @@ def accept_tutee(request, session_id):
 
         new_tutor = current_user
         new_tutee = tutee
+        new_mutual_sched_list = request.POST.getlist("session_mutual")
+        new_mutual_sched = " ".join(new_mutual_sched_list)
 
         for _session in chosen_sessions:
-            foo = Sessions_Accepted.objects.create(session=_session, tutor=new_tutor, tutee=new_tutee)
+            foo = Sessions_Accepted.objects.create(session=_session, tutor=new_tutor, tutee=new_tutee, session_mutual = new_mutual_sched)
+            print(foo.session_mutual)
         return redirect('home')
     else:
         current_session = Sessions.objects.get(id = session_id)
