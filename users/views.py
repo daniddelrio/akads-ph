@@ -103,7 +103,7 @@ def register_tutor(request):
 
             if(password1 == password2):
                 new_password = request.POST.get('password1')
-                user = User.objects.create_user(username=new_username, first_name=new_firstname, last_name=new_lastname, password=new_password, email=new_email, picture=new_picture)
+                user = User.objects.create_user(username=new_username, first_name=new_firstname, last_name=new_lastname, password=new_password, email=new_email)
 
                 # picture_form = PictureForm({'picture' : new_picture}, request.FILES, instance=user)
                 # print(picture_form)
