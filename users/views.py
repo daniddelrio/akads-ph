@@ -178,8 +178,12 @@ def home(request):
                 new_hours = request.POST.get('hours')
                 new_subject = request.POST.get('subject')
                 new_end = request.POST.get('end_time')
+
+                if len(sched) < int(new_hours)*2:
+                    messages.error(request,"Schedule set is not sufficient for hours requested")
+                    return redirect('home')
                 new_sched = " ".join(sched)
-                    
+                
                 print(new_sched)
 
                 new_start = datetime.datetime.strptime(new_start, settings.TIME_INPUT_FORMATS[0]).time()
@@ -279,7 +283,7 @@ def upcoming(request):
         tutee_now = []
         for x in sessions:
             tutee_now = Tutee.objects.get(user=x.tutee).cellnum
-        
+
         context = {
             'session_group':sessions,
             'credit_user':credit_user,
