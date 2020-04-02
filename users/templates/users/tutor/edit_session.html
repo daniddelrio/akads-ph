@@ -13,8 +13,12 @@
     {% csrf_token %}
       <div class="card-panel upcoming complete_session">
         <div class="valign-wrapper">
-          <i class="medium material-icons akads-mid-blue-text">account_circle</i>
-          <h5 class="akads-dark-blue-text"><strong>Tutee:</strong> {{session.tutee.first_name}} {{session.tutee.last_name}}</h5>
+          {% if session.user.picture %}
+            <img src="{% get_media_prefix %}{{ session.user.picture }}" class="responsive-img circle" style="height:100px; width: 100px; object-fit: cover; margin-left:15px; padding: 10px;" />
+          {% else %}
+            <i class="medium material-icons akads-mid-blue-text">account_circle</i>
+          {% endif %}
+          <h5 class="akads-dark-blue-text"><strong>Tutee:</strong> {{session.user.first_name}} {{session.user.last_name}}</h5>
         </div>
         <div class="row">
           <div class="col s6">

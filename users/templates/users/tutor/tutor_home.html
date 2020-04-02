@@ -55,20 +55,6 @@
         </div>
       </div>
       <div class="col s4">
-        <div class="card-panel"> <!-- redeem card -->
-          <form method="POST">
-          {% csrf_token %}
-            <h5 class="akads-dark-blue-text">Just completed a session?</h5>
-            <p class="akads-mid-blue-text">Input the code given by your tutee to verify and get your credits!</p>
-            <div class="form-group input-field">
-              <input id="code" type="text" name="code">
-              <label for="code">Input Here</label>
-            </div>
-            <span>
-              <button type="submit" class="waves-effect waves-light btn akads-dark-blue" id="redeem">Redeem</button>
-            </span>
-          </form>
-        </div>
         <div id="calendar-panel" class="card-panel"> <!-- calendar card -->
           <div id="calendar"></div>
         </div>

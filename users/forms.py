@@ -7,6 +7,18 @@ from django.forms import ModelForm
 
 User = get_user_model()
 
+class PictureForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(PictureForm, self).__init__(*args, **kwargs)
+        self.fields['picture'].widget.attrs={
+            'id' : 'display-pic',
+            'style': 'opacity: 0;'
+        }
+
+    class Meta:
+        model = User
+        fields = ['picture']
+
 class TuteeRegisterForm(UserCreationForm):
     email = forms.EmailField()
 
@@ -75,6 +87,12 @@ class RequestScheduleForm(ModelForm):
             "nineteenToHalf", 
             "halfToTwenty",   
         ]
+
+class MutualScheduleForm(forms.Form):
+    def __init__(self, sched_choices,*args, **kwargs):
+        super(MutualScheduleForm,self).__init__(*args, **kwargs)
+        self.fields["session_mutual"].choices = sched_choices
+    session_mutual = forms.MultipleChoiceField(choices=(), required = True)
 
 class tutorAvailabilitySched(ModelForm):
     sevenToHalf = forms.BooleanField(label = "7:00am - 7:30am", initial = False, required = False)
