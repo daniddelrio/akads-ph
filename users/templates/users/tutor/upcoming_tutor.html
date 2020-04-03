@@ -7,7 +7,9 @@
 {%block content%}
   <div class="container user" id='map-check' stat='tutor'>
     <h4 class="akads-dark-blue-text">Upcoming</h4>
+    <strong class="akads-mid-blue-text">Below are the details of your upcoming sessions.</strong>
       
+    {% load static %}
     {% if session_group %}
     {% for individual_session in session_group %}
       <div class="card-panel upcoming">
@@ -16,7 +18,11 @@
             <ul class="left-align">
               <li>
                 <div class="valign-wrapper">
-                <i class="medium material-icons akads-mid-blue-text">account_circle</i>
+                {% if individual_session.tutee.picture %}
+                  <img src="{% get_media_prefix %}{{ individual_session.tutee.picture }}" class="responsive-img circle" style="height:100px; width: 100px; object-fit: cover; margin-left:15px; padding: 10px;" />
+                {% else %}
+                  <i class="medium material-icons akads-mid-blue-text">account_circle</i>
+                {% endif %}
                 <h5 class="akads-dark-blue-text"><strong>Tutee:</strong> {{individual_session.tutee.first_name}} {{individual_session.tutee.last_name}}</h5>
                 </div>
               </li>
@@ -25,7 +31,7 @@
               <li class="akads-dark-blue-text"><strong>Subject:</strong> Grade {{individual_session.session.grade}} {{individual_session.session.subject}}</li>
               <li class="akads-dark-blue-text"><strong>Location:</strong> {{individual_session.session.location}}</li>
               <li class="akads-dark-blue-text"><strong>Contact Number: </strong>{{cellnum}}</li>
-              <li class="akads-dark-blue-text"><strong>Mutual Schedule:</strong>{{ individual_session.session_mutual }} </li>
+              <li class="akads-dark-blue-text"><strong>Mutual Schedule: </strong>{{ individual_session.session_mutual }} </li>
               
               <br>
               <li class="akads-dark-blue-text"><a class="btn akads-blue waves-effect waves-light" href="{% url 'complete_session' individual_session.session.id %}">Complete Session</a></li>
@@ -39,7 +45,7 @@
       </div>
     {% endfor %}
     {% else %}
-      <p class="akads-mid-blue-text">Upcoming sessions will be listed here</p>
+      <p class="akads-mid-blue-text">You have no upcoming sessions.</p>
     {% endif %}
   </div>
 {% endblock content %}
