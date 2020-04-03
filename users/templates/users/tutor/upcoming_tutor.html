@@ -31,6 +31,8 @@
               <li class="akads-dark-blue-text"><strong>Subject:</strong> Grade {{individual_session.session.grade}} {{individual_session.session.subject}}</li>
               <li class="akads-dark-blue-text"><strong>Location:</strong> {{individual_session.session.location}}</li>
               <li class="akads-dark-blue-text"><strong>Contact Number: </strong>{{cellnum}}</li>
+              <li class="akads-dark-blue-text"><strong>Mutual Schedule: </strong>{{ individual_session.session_mutual }} </li>
+              
               <br>
               <li class="akads-dark-blue-text"><a class="btn akads-blue waves-effect waves-light" href="{% url 'complete_session' individual_session.session.id %}">Complete Session</a></li>
             </ul>

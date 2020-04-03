@@ -172,124 +172,9 @@ def home(request):
             return redirect('transactions')
 
         if(request.method == 'POST'):
-            form = RequestScheduleForm(data = request.POST)
-            new_sched7To730 = False
-            new_sched730To8 = False
-            new_sched8To830 = False
-            new_sched830To9 = False
-            new_sched9To930 = False
-            new_sched930To10 = False
-            new_sched10To1030 = False
-            new_sched1030To11 = False
-            new_sched11To1130 = False
-            new_sched1130To12 = False
-            new_sched12To1230 = False
-            new_sched1230To1 = False
-            new_sched1To130 = False
-            new_sched130To2 = False
-            new_sched2To230 = False
-            new_sched230To3 = False
-            new_sched3To330 = False
-            new_sched330To4 = False
-            new_sched4To430 = False
-            new_sched430To5 = False
-            new_sched5To530 = False
-            new_sched530To6 = False
-            new_sched6To630 = False
-            new_sched630To7 = False
-            
-            # sched = [
-            #     new_sched7To730 ,
-            #     new_sched730To8 ,
-            #     new_sched8To830 ,
-            #     new_sched830To9 ,
-            #     new_sched9To930 ,
-            #     new_sched930To10 ,
-            #     new_sched10To1030 ,
-            #     new_sched1030To11 ,
-            #     new_sched11To1130 ,
-            #     new_sched1130To12 ,
-            #     new_sched12To1230 ,
-            #     new_sched1230To1 ,
-            #     new_sched1To130 ,
-            #     new_sched130To2 ,
-            #     new_sched2To230 ,
-            #     new_sched230To3 ,
-            #     new_sched3To330 ,
-            #     new_sched330To4 ,
-            #     new_sched4To430 ,
-            #     new_sched430To5 ,
-            #     new_sched5To530 ,
-            #     new_sched530To6 ,
-            #     new_sched6To630 ,
-            #     new_sched630To7 ,
-            # ]
-            if form.is_valid():
-                new_sched7To730 = form.cleaned_data.get("sevenToHalf")
-                new_sched730To8 = form.cleaned_data.get("halfToEight")
-
-                new_sched8To830 = form.cleaned_data.get("eightToHalf")
-                new_sched830To9 = form.cleaned_data.get("halfToNine")
-
-                new_sched9To930 = form.cleaned_data.get("nineToHalf")
-                new_sched930To10 = form.cleaned_data.get("halfToTen")
-
-                new_sched10To1030 = form.cleaned_data.get("tenToHalf")
-                new_sched1030To11 = form.cleaned_data.get("halfToEleven")
-
-                new_sched11To1130 = form.cleaned_data.get("elevenToHalf")
-                new_sched1130To12 = form.cleaned_data.get("halfToTwelve")
-
-                new_sched12To1230 = form.cleaned_data.get("twelveToHalf")
-                new_sched1230To1 = form.cleaned_data.get("halfToThirteen")
-
-                new_sched1To130 = form.cleaned_data.get("thirteenToHalf")
-                new_sched130To2 = form.cleaned_data.get("halfToFourteen")
-
-                new_sched2To230 = form.cleaned_data.get("fourteenToHalf")
-                new_sched230To3 = form.cleaned_data.get("halfToFifteen")
-
-                new_sched3To330 = form.cleaned_data.get("fifteenToHalf")
-                new_sched330To4 = form.cleaned_data.get("halfToSixteen")
-
-                new_sched4To430 = form.cleaned_data.get("seventeenToHalf")
-                new_sched430To5 = form.cleaned_data.get("halfToEighteen")
-
-                new_sched5To530 = form.cleaned_data.get("eighteenToHalf")
-                new_sched530To6 = form.cleaned_data.get("halfToNineteen")
-
-                new_sched6To630 = form.cleaned_data.get("nineteenToHalf")
-                new_sched630To7 = form.cleaned_data.get("halfToNineteen")
-                # print(new_sched7To730)
-                # print(new_sched10To1030)
-                sched = [
-                new_sched7To730 ,
-                new_sched730To8 ,
-                new_sched8To830 ,
-                new_sched830To9 ,
-                new_sched9To930 ,
-                new_sched930To10 ,
-                new_sched10To1030 ,
-                new_sched1030To11 ,
-                new_sched11To1130 ,
-                new_sched1130To12 ,
-                new_sched12To1230 ,
-                new_sched1230To1 ,
-                new_sched1To130 ,
-                new_sched130To2 ,
-                new_sched2To230 ,
-                new_sched230To3 ,
-                new_sched3To330 ,
-                new_sched330To4 ,
-                new_sched4To430 ,
-                new_sched430To5 ,
-                new_sched5To530 ,
-                new_sched530To6 ,
-                new_sched6To630 ,
-                new_sched630To7 ,
-                ]
-                for s in sched:
-                    print(s)
+            form = RequestScheduleForm()
+            print(request.POST.getlist("session_schedule"))
+            sched = request.POST.getlist("session_schedule")
 
             try:
                 session_num = len(Sessions_Accepted.objects.filter(tutee = user))
@@ -302,6 +187,7 @@ def home(request):
                 new_subject = request.POST.get('subject')
                 new_end = request.POST.get('end_time')
                 new_sched = " ".join(sched)
+                print(new_sched)
 
                 new_start = datetime.datetime.strptime(new_start, settings.TIME_INPUT_FORMATS[0]).time()
 
@@ -326,31 +212,7 @@ def home(request):
                                                                subject=new_subject,
                                                                time_end=new_end,
                                                                session_date=_date,
-                                                               session_schedule = new_sched,
-                                                               sevenToHalf = new_sched7To730,
-                                                               halfToEight = new_sched730To8,
-                                                               eightToHalf = new_sched8To830,
-                                                               halfToNine = new_sched830To9,
-                                                               nineToHalf = new_sched9To930,   
-                                                               halfToTen = new_sched930To10,      
-                                                               tenToHalf = new_sched10To1030,      
-                                                               halfToEleven = new_sched1030To11,   
-                                                               elevenToHalf = new_sched11To1130,   
-                                                               halfToTwelve = new_sched1130To12,   
-                                                               twelveToHalf = new_sched12To1230,   
-                                                               halfToThirteen = new_sched1230To1, 
-                                                               thirteenToHalf = new_sched1To130, 
-                                                               halfToFourteen = new_sched130To2, 
-                                                               fourteenToHalf = new_sched2To230, 
-                                                               halfToFifteen = new_sched230To3,  
-                                                               fifteenToHalf = new_sched3To330,  
-                                                               halfToSixteen = new_sched330To4,  
-                                                               seventeenToHalf = new_sched4To430,
-                                                               halfToEighteen = new_sched430To5, 
-                                                               eighteenToHalf = new_sched5To530, 
-                                                               halfToNineteen = new_sched530To6, 
-                                                               nineteenToHalf = new_sched6To630, 
-                                                               halfToTwenty = new_sched630To7,
+                                                               session_schedule = new_sched
                                                                )
                 except Exception as ex:
                     template = "An exception of type {0} occurred. Arguments:\n{1!r}"
@@ -414,7 +276,7 @@ def upcoming(request):
         tutee_now = []
         for x in sessions:
             tutee_now = Tutee.objects.get(user=x.tutee).cellnum
-
+        
         context = {
             'session_group':sessions,
             'credit_user':credit_user,
@@ -461,9 +323,12 @@ def accept_tutee(request, session_id):
 
         new_tutor = current_user
         new_tutee = tutee
+        new_mutual_sched_list = request.POST.getlist("session_mutual")
+        new_mutual_sched = " ".join(new_mutual_sched_list)
 
         for _session in chosen_sessions:
-            foo = Sessions_Accepted.objects.create(session=_session, tutor=new_tutor, tutee=new_tutee)
+            foo = Sessions_Accepted.objects.create(session=_session, tutor=new_tutor, tutee=new_tutee, session_mutual = new_mutual_sched)
+            print(foo.session_mutual)
         return redirect('home')
     else:
         current_session = Sessions.objects.get(id = session_id)
