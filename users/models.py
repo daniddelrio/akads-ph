@@ -7,6 +7,7 @@ class User(AbstractUser):
     id = models.AutoField(primary_key=True)
     is_tutee = models.BooleanField(default=False)
     credits = models.IntegerField(default=0)
+    picture = models.ImageField(upload_to='display_pics/', blank=True, null=True)
 
     def __str__(self):
         return self.username
@@ -37,7 +38,6 @@ class Tutee(models.Model):
     cardnum = models.CharField(max_length=16)
     fullname = models.CharField(max_length=30)
     expiry_date = models.CharField(max_length=7)
-    seccode = models.IntegerField()
 
     def __str__(self):
         return self.user.username
@@ -61,6 +61,7 @@ class Sessions(models.Model):
     location = models.CharField(max_length=50)
     code = models.CharField(max_length=5)
     is_accepted = models.BooleanField(default=False)
+    session_schedule = models.CharField(max_length=700)
 
     session_schedule = models.CharField(max_length = 900)
     

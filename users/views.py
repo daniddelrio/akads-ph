@@ -63,11 +63,10 @@ def register_tutee(request):
             new_cardnum = request.POST.get('cardnum')
             new_fullname = request.POST.get('fullname')
             new_expiry_date = request.POST.get('expiry_date')
-            new_seccode = request.POST.get('seccode')
             if(password1 == password2):
                 new_password = request.POST.get('password1')
                 user = User.objects.create_user(username=new_username, first_name=new_firstname, last_name=new_lastname, password=new_password, email=new_email, is_tutee=True)
-                tutee = Tutee.objects.create(user=user, housenum=new_housenum, province=new_province, city=new_city, barangay=new_barangay, cellnum=new_cellnum, birthday=new_birthday, sex=new_sex, bio=new_bio, cardnum=new_cardnum, fullname=new_fullname, expiry_date=new_expiry_date, seccode=new_seccode)
+                tutee = Tutee.objects.create(user=user, housenum=new_housenum, province=new_province, city=new_city, barangay=new_barangay, cellnum=new_cellnum, birthday=new_birthday, sex=new_sex, bio=new_bio, cardnum=new_cardnum, fullname=new_fullname, expiry_date=new_expiry_date)
                 messages.success(request, f'Account created!')
                 return render(request, "users/tutee/registertutee.html")
             else:
@@ -85,6 +84,7 @@ def register_tutee(request):
 
 def register_tutor(request):
     if (request.method == 'POST'):
+        picture_form = None
         try:
             new_username = request.POST.get('username')
             new_firstname = request.POST.get('firstname')
@@ -92,6 +92,7 @@ def register_tutor(request):
             password1 = request.POST.get('password1')
             password2 = request.POST.get('password2')
             new_email = request.POST.get('email')
+            # new_picture = request.POST.get('picture')
             new_location = request.POST.get('location')
             new_birthday = request.POST.get('birthday')
             new_sex = request.POST.get('sex')
@@ -99,9 +100,17 @@ def register_tutor(request):
             new_bio = request.POST.get('bio')
             new_reason = request.POST.get('reason')
             new_requirements = request.POST.get('uploadfiles')
+
             if(password1 == password2):
                 new_password = request.POST.get('password1')
                 user = User.objects.create_user(username=new_username, first_name=new_firstname, last_name=new_lastname, password=new_password, email=new_email)
+
+                # picture_form = PictureForm({'picture' : new_picture}, request.FILES, instance=user)
+                # print(picture_form)
+                # if picture_form.is_valid():
+                #     picture_form.save()
+                #     print(picture_form)
+
                 tutor = Tutor.objects.create(user=user, birthday=new_birthday, sex=new_sex, bio=new_bio, reason=new_reason, requirements=new_requirements)
                 new_location1 = new_location.split(",")
                 print(new_location1)
@@ -115,19 +124,18 @@ def register_tutor(request):
                     subject = Subjects.objects.create(user=user, subjects=x)
 
                 messages.success(request, f'Account created!')
-                return render(request, "users/tutor/registertutor.html")
             else:
                 messages.error(request, 'Error passwords did not match each other')
-                return render(request, "users/tutor/registertutor.html")
-            return render(request, "users/tutor/registertutor.html")
         except Exception as ex:
             template = "An exception of type {0} occurred. Arguments:\n{1!r}"
             message = template.format(type(ex).__name__, ex.args)
             print(message)
             messages.error(request, 'Error please input valid values for each field')
-            return render(request, "users/tutor/registertutor.html")
+
+        return render(request, "users/tutor/registertutor.html", {'picture_form' : picture_form})
     else:
-        return render(request, "users/tutor/registertutor.html")
+        picture_form = PictureForm()
+        return render(request, "users/tutor/registertutor.html", {'picture_form' : picture_form})
 
 def login_user(request):
     if(request.method == 'POST'):
@@ -179,14 +187,12 @@ def home(request):
                 new_subject = request.POST.get('subject')
                 new_end = request.POST.get('end_time')
                 new_sched = " ".join(sched)
-                    
                 print(new_sched)
 
                 new_start = datetime.datetime.strptime(new_start, settings.TIME_INPUT_FORMATS[0]).time()
 
                 orders = Sessions.objects.filter(user=user)
                 new_code = get_random_string(length=5)
-                print('made it here0')
                 
                 new_dates = new_date.split(",")
                 credit_cost = len(new_dates) * int(new_hours)
@@ -207,7 +213,7 @@ def home(request):
                                                                time_end=new_end,
                                                                session_date=_date,
                                                                session_schedule = new_sched
-                                                               ) 
+                                                               )
                 except Exception as ex:
                     template = "An exception of type {0} occurred. Arguments:\n{1!r}"
                     message = template.format(type(ex).__name__, ex.args)
@@ -230,9 +236,12 @@ def home(request):
                         if(x.user == y.user):
                             req = Requests.objects.create(user=x.user, session=new_sessions)
                 messages.success(request, f'Your request has been sent!')
-            except:
+            except Exception as ex:
                 session_num = len(Sessions_Accepted.objects.filter(tutee = user))
                 messages.error(request, 'Error please input valid values for each field')
+                template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+                message = template.format(type(ex).__name__, ex.args)
+                print(message)
         else:     
             form = RequestScheduleForm()
         
@@ -242,18 +251,6 @@ def home(request):
             'form': form
             })
     else:
-        if(request.method == 'POST'):
-            _sessions = Sessions.objects.filter(code=request.POST.get('code'))
-            if len(_sessions) == 0:
-                messages.error(request, "You entered an invalid code")
-            else:
-                _credits = 0
-                for _session in _sessions:
-                    _credits += _session.hours
-                messages.error(request, f"{_credits} credits redeemed!")
-                user.credits += _credits
-                user.save()
-                _sessions.delete()
         # Get multiple dates per request (if multiple)
         _requests = Requests.objects.filter(is_rejected = False, user=user)
         for _request in _requests:
@@ -352,49 +349,6 @@ def delete_request(request, session_id):
 
     return redirect('home')
 
-@login_required
-@transaction.atomic
-def end_session(request, session_id):
-    user=request.user
-    ended = Sessions_Ended.objects.filter(pk=session_id)
-
-    if not ended.exists():
-        print(message)
-        messages.error(request, 'Error: this session does not exist!')
-        return redirect('home')
-
-    ended = ended.first()
-    if (request.method == 'POST'):
-        try:
-
-            # ============ CHANGE ONCE MAP IS BACK =============
-            # new_location = request.POST.get('location')
-            new_location = 'Test'
-            new_time_end = request.POST.get('end_time')
-
-            messages.success(request, f'Session has ended!')
-
-            ended.time_end = datetime.datetime.strptime(new_time_end, "%I:%M %p").time()
-            ended.save()
-
-            minutes = ended.minutes
-            amount = get_amount_from_minutes(minutes)
-
-            if not Payment.objects.filter(session=ended).exists():
-                Payment.objects.create(tutee=user, session=ended, amount=amount)
-
-            return redirect('transactions')
-        except Exception as ex:
-            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-            message = template.format(type(ex).__name__, ex.args)
-            print(message)
-            messages.error(request, 'Error: please input valid values for each field')
-
-    return render(request, "users/tutee/end_session.html", {
-        'session' : ended,
-        'credit_user': user
-        })
-
 # In the POV of the TUTOR
 @login_required
 def complete_session(request, session_id):
@@ -422,7 +376,7 @@ def complete_session(request, session_id):
             if new_time_end <= new_time_start:
                 raise Exception("Invalid time range")
 
-            if new_session_date is None or new_time_start is None or new_time_end is None:
+            if new_session_date == '' or new_time_start is None or new_time_end is None:
                 raise Exception("Unfilled form fields")
 
             new_time_start = datetime.datetime.strptime(new_time_start, settings.TIME_INPUT_FORMATS[0]).time()
@@ -448,7 +402,7 @@ def complete_session(request, session_id):
             template = "An exception of type {0} occurred. Arguments:\n{1!r}"
             message = template.format(type(ex).__name__, ex.args)
             print(message)
-            messages.error(request, 'Error: please input valid values for each field')
+            messages.error(request, 'Error: please input valid values for each field: {}'.format(ex.args[0]))
 
     return render(request, "users/tutor/complete_session.html", {
         'session' : done,
@@ -572,27 +526,6 @@ def unconfirmed_status(request, session_id, status):
 
     return redirect('home')
 
-@login_required
-def confirm_session(request):
-    try:
-        user=request.user
-        code_input = request.POST.get('code')
-        new_code = Sessions.objects.get(code=code_input)
-
-        if(new_code is not None):
-            new_code.delete()
-            user.credits = user.credits + 1
-        else:
-            messages.error(request, 'Error please input a valid code')
-
-        return redirect('home')
-    except Exception as ex:
-        template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-        message = template.format(type(ex).__name__, ex.args)
-        print(message)
-        messages.error(request, 'Error please input a valid code')
-        return redirect('home')
-
 # Shows both transactions and payments needed
 @login_required
 def transactions(request):
@@ -694,13 +627,17 @@ def pay_balance(request):
 @login_required
 def history(request):
     user=request.user
-    sessions = Sessions.objects.filter(is_accepted = False, user=user)
+    # sessions = Sessions.objects.filter(is_accepted = False, user=user)
 
+    sessions = Sessions_Ended.objects.filter(final=True, unconfirmed=False, tutor=user)
     context = {
         'session_group':sessions,
         'credit_user':user
     }
+
     if(user.is_tutee==True):
+        sessions = Sessions_Ended.objects.filter(final=True, unconfirmed=False, user=user)
+        context['session_group'] = sessions
         return render(request, "users/tutee/history_tutee.html", context)
 
     return render(request, "users/tutor/history_tutor.html", context)
@@ -793,12 +730,10 @@ def edit_card(request):
             new_cardnum = request.POST.get('cardnum')
             new_fullname = request.POST.get('fullname')
             new_expiry_date = request.POST.get('expiry_date')
-            new_seccode = request.POST.get('seccode')
 
             tutee.cardnum = new_cardnum
             tutee.fullname = new_fullname
             tutee.expiry_month = new_expiry_date
-            tutee.seccode = new_seccode
 
             tutee.save()
             return redirect('profile')
@@ -814,16 +749,29 @@ def edit_card(request):
 @login_required
 def profile(request):
     user=request.user
+    loc = None
     if(user.is_tutee==True):
         user2 = Tutee.objects.get(user=user)
     else:
         loc = Locations.objects.filter(user=user)
         user2 = Tutor.objects.get(user=user)
 
+    if request.method == 'POST':
+        picture_form = PictureForm(request.POST, request.FILES, instance=user)
+        if picture_form.is_valid():
+            picture_form.save()
+            messages.success(request, 'Image successfully uploaded!')
+            return redirect('profile')
+        else:
+            messages.error(request, _('Please upload a valid image.'))
+    else:
+        picture_form = PictureForm(instance=user)
+
     return render(request, 'users/profile.html', {
         'current_user':user2, 
         'location_user':loc, 
-        'credit_user':user
+        'credit_user':user,
+        'picture_form': picture_form
         })
 
 @login_required

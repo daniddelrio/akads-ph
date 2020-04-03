@@ -1,4 +1,5 @@
 {% extends "../base.html"%}
+{% load static %}
 
 {% block body %}
 <body>
@@ -15,9 +16,13 @@
           <div class="col s4">
               <ul class="left-align">
                 <li class="akads-dark-blue-text">
-                  <div class="valign-wrapper">
-                  <i class="medium material-icons akads-mid-blue-text">account_circle</i>
-                  <strong>Tutee:</strong> {{individual_session.user.first_name}}
+                  <div style="display: flex; flex-direction: column; align-items: center">
+                    {% if individual_session.user.picture %}
+                      <img src="{% get_media_prefix %}{{ individual_session.user.picture }}" class="responsive-img circle" style="height:150px; width: 150px; object-fit: cover; margin-left:15px; padding: 10px;" />
+                    {% else %}
+                      <i id="settings-pic" class="medium material-icons akads-mid-blue-text">account_circle</i>
+                    {% endif %}
+                    <p><strong>Tutee:</strong> &nbsp; {{individual_session.user.first_name}} {{individual_session.user.last_name}}</p>
                   </div>
                 </li>
               </ul>

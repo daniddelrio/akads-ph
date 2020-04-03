@@ -1,16 +1,38 @@
 {% extends "./base.html"%}
+{% load static %}
 
 {% block body %}
 <body>
+<script>
+   function chooseFile() {
+      $("#display-pic").click();
+   }
+</script>
 {% endblock %}
 
 {%block content%}
   <div class="container user profile">
     <h4 class="akads-dark-blue-text">Profile Settings</h4>
-    <div id="settings-main" class="valign-wrapper">
-      <i id="settings-pic" class="large material-icons akads-mid-blue-text">account_circle</i>
-      <h5 id="settings-name" class="akads-dark-blue-text">{{ current_user.user.first_name }} {{ current_user.user.last_name }}</h5>
-    </div>
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div id="settings-main" class="valign-wrapper">
+          <div style="display: flex; flex-direction: column;">
+            {% if current_user.user.picture %}
+              <img src="{% get_media_prefix %}{{ current_user.user.picture }}" class="responsive-img circle" style="height:150px; width: 150px; object-fit: cover; margin-left:15px; padding: 10px;" />
+            {% else %}
+              <i id="settings-pic" class="large material-icons akads-mid-blue-text">account_circle</i>
+            {% endif %}
+            <div>
+              <button class="waves-effect waves-light btn-small akads-mid-blue" onclick="chooseFile();" type="button">Upload</button>
+              <button class="waves-effect waves-light btn-small akads-blue" type="submit">Submit</button>
+            </div>
+          </div>
+        <h5 id="settings-name" class="akads-dark-blue-text">{{ current_user.user.first_name }} {{ current_user.user.last_name }}</h5>
+      </div>
+      <div style="height:0px;overflow:hidden">
+        {{ picture_form.picture }}
+      </div>
+    </form>
     <div class="card-panel akads-light-blue settings">
       <div class="row left-align valign-wrapper">
         <div class="col s2">
