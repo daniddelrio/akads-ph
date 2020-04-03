@@ -180,7 +180,7 @@ def home(request):
                 new_end = request.POST.get('end_time')
 
                 if len(sched) < int(new_hours)*2:
-                    messages.error(request,"Schedule set is not sufficient for hours requested")
+                    messages.error(request,"Schedule set is not sufficient for hours requested.")
                     return redirect('home')
                 new_sched = " ".join(sched)
                 
