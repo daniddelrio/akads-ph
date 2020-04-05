@@ -1,0 +1,38 @@
+{% extends "./base.html"%}
+
+{% block body %}
+<body>
+{% endblock %}
+
+{%block content%}
+  <div class="container login">
+    <div class = 'content-section'>
+      <form method = "POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="card-panel">
+          <h4 class="akads-dark-blue-text">Edit Resume/CV</h4>
+          <span class="akads-dark-blue-text">
+            Current Resume: 
+            {% if tutor.resume %}
+            <a href="{{ tutor.resume.url }}" target="_blank">{{ tutor.resume }}</a>
+            {% else %}
+              None
+            {% endif %}
+          </span>
+          <div class="form-group input-field file-field">
+            <div class="btn-small akads-light-blue akads-blue-text">
+              <span>Upload</span>
+              <input type="file" name="new_resume">
+            </div>
+            <div class="file-path-wrapper">
+              <input class="file-path validate" type="text" placeholder="Upload resume or CV">
+            </div>
+          </div>
+          <div class="form-group">
+            <button class="btn akads-blue" type="submit">Edit</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock content %}

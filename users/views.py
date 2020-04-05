@@ -739,6 +739,27 @@ def edit_card(request):
 
     return render(request, 'users/edit_card.html', {'credit_user':user})
 
+@login_required
+def edit_resume(request):
+    user = request.user
+    tutor = None
+    try:
+        tutor = Tutor.objects.get(user=user)
+        if (request.method == 'POST'):
+            new_resume = request.FILES.get('new_resume')
+
+            tutor.resume = new_resume
+            tutor.save()
+
+            return redirect('profile')
+    except Exception as ex:
+        template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+        message = template.format(type(ex).__name__, ex.args)
+        print(message)
+        messages.error(request, 'Error please input valid values for each field')
+
+    return render(request, 'users/edit_resume.html', {'tutor' : tutor})
+
 
 @login_required
 def profile(request):
@@ -764,7 +785,6 @@ def profile(request):
     return render(request, 'users/profile.html', {
         'current_user':user2, 
         'location_user':loc, 
-        'credit_user':user,
         'picture_form': picture_form
         })
 
