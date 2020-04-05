@@ -100,6 +100,7 @@ def register_tutor(request):
             new_bio = request.POST.get('bio')
             new_reason = request.POST.get('reason')
             new_requirements = request.POST.get('uploadfiles')
+            new_resume = request.POST.get('resume')
 
             if(password1 == password2):
                 new_password = request.POST.get('password1')
@@ -111,7 +112,7 @@ def register_tutor(request):
                 #     picture_form.save()
                 #     print(picture_form)
 
-                tutor = Tutor.objects.create(user=user, birthday=new_birthday, sex=new_sex, bio=new_bio, reason=new_reason, requirements=new_requirements)
+                tutor = Tutor.objects.create(user=user, birthday=new_birthday, sex=new_sex, bio=new_bio, reason=new_reason, requirements=new_requirements, resume=new_resume)
                 new_location1 = new_location.split(",")
                 print(new_location1)
                 for x in new_location1:
