@@ -149,7 +149,7 @@ if (document.getElementById('subject-select')) {
 // MODAL
 $(document).ready(function(){
   $('#modal1').modal();
-  $('#modal1').modal('open'); 
+  $('#modal1').modal('open');
 });
 
 $(document).ready(function(){
