@@ -152,10 +152,19 @@ ul.requirements li {
   padding-bottom: 100px;
 }
 
+.card-panel.credits-bottom {
+  margin: 0 auto;
+  height: 400px;
+  width: 90%;
+  overflow-y: auto;
+}
+
+
 .card-panel.credits-left {
   margin: 0 auto;
   height: 400px;
   width: 80%;
+  overflow-y: auto;
 }
 
 
@@ -169,7 +178,7 @@ ul.requirements li {
 
 .card-panel.credits-right {
   margin: 0 auto;
-  min-height: 400px;
+  height: 400px;
   width: 80%;
   overflow-y: auto;
 }

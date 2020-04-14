@@ -30,6 +30,13 @@
               <li class="akads-dark-blue-text"><strong>Time:</strong> {{individual_session.session.time_start}} - {{individual_session.session.time_end}}</li>
               <li class="akads-dark-blue-text"><strong>Subject:</strong> Grade {{individual_session.session.grade}} {{individual_session.session.subject}}</li>
               <li class="akads-dark-blue-text"><strong>Location:</strong> {{individual_session.session.location}}</li>
+              <li class="akads-dark-blue-text"><strong>Resume:</strong>
+                {% if individual_session.tutor.tutor.resume %}
+                  <a href="{{ individual_session.tutor.tutor.resume.url }}" target="_blank">{{ individual_session.tutor.tutor.resume }}</a>
+                {% else %}
+                  None
+                {% endif %}</a>
+              </li>
             </ul>
             <p class="akads-mid-blue-text left-align">Please wait for your tutor to complete the session!</p>
           </div>

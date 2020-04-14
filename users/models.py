@@ -6,7 +6,6 @@ from datetime import datetime
 class User(AbstractUser):
     id = models.AutoField(primary_key=True)
     is_tutee = models.BooleanField(default=False)
-    credits = models.IntegerField(default=0)
     picture = models.ImageField(upload_to='display_pics/', blank=True, null=True)
 
     def __str__(self):
@@ -19,7 +18,8 @@ class Tutor(models.Model):
     sex = models.CharField(max_length=7)
     bio = models.CharField(max_length=100)
     reason = models.CharField(max_length=100, null=True)
-    requirements = models.ImageField(blank=True)
+    requirements = models.FileField(blank=True)
+    resume = models.FileField(blank=True, null=True)
 
     def __str__(self):
         return self.user.username

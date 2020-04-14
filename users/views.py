@@ -100,6 +100,7 @@ def register_tutor(request):
             new_bio = request.POST.get('bio')
             new_reason = request.POST.get('reason')
             new_requirements = request.POST.get('uploadfiles')
+            new_resume = request.POST.get('resume')
 
             if(password1 == password2):
                 new_password = request.POST.get('password1')
@@ -111,7 +112,7 @@ def register_tutor(request):
                 #     picture_form.save()
                 #     print(picture_form)
 
-                tutor = Tutor.objects.create(user=user, birthday=new_birthday, sex=new_sex, bio=new_bio, reason=new_reason, requirements=new_requirements)
+                tutor = Tutor.objects.create(user=user, birthday=new_birthday, sex=new_sex, bio=new_bio, reason=new_reason, requirements=new_requirements, resume=new_resume)
                 new_location1 = new_location.split(",")
                 print(new_location1)
                 for x in new_location1:
@@ -195,16 +196,8 @@ def home(request):
                 print(new_sched)
 
                 new_start = datetime.datetime.strptime(new_start, settings.TIME_INPUT_FORMATS[0]).time()
-
-                orders = Sessions.objects.filter(user=user)
                 new_code = get_random_string(length=5)
-                
                 new_dates = new_date.split(",")
-                credit_cost = len(new_dates) * int(new_hours)
-
-                # if user.credits < credit_cost:
-                #     plurality = 's' if credit_cost > 1 else ''
-                #     messages.error(request, f"You don't have enough credits! (You need {credit_cost} credit{plurality})")
 
                 try:
                     for _date in new_dates:
@@ -224,11 +217,6 @@ def home(request):
                     message = template.format(type(ex).__name__, ex.args)
                     print(message)
 
-                user.credits -= credit_cost
-                user.save()
-                
-                print('made it here')
-
                 # Commented out for now. - Carlos
                 # new_booking = new_date.split(",")
                 # for z in new_booking:
@@ -241,6 +229,8 @@ def home(request):
                         if(x.user == y.user):
                             req = Requests.objects.create(user=x.user, session=new_sessions)
                 messages.success(request, f'Your request has been sent!')
+                return redirect('home')
+
             except Exception as ex:
                 session_num = len(Sessions_Accepted.objects.filter(tutee = user))
                 messages.error(request, 'Error please input valid values for each field')
@@ -312,9 +302,9 @@ def cancel_pending(request, session_id):
 def accept_tutee(request, session_id):
     if(request.method == "POST"):
         user = request.user
-        current_user = User.objects.get(id=user.id)
         chosen_session = Sessions.objects.get(id=session_id)
         chosen_sessions = Sessions.objects.filter(code=chosen_session.code)
+
         tutee = chosen_session.user
 
         for _session in chosen_sessions:
@@ -326,14 +316,12 @@ def accept_tutee(request, session_id):
             x.is_rejected = True
             x.save()
 
-        new_tutor = current_user
-        new_tutee = tutee
         new_mutual_sched_list = request.POST.getlist("session_mutual")
         new_mutual_sched = " ".join(new_mutual_sched_list)
 
         for _session in chosen_sessions:
-            foo = Sessions_Accepted.objects.create(session=_session, tutor=new_tutor, tutee=new_tutee, session_mutual = new_mutual_sched)
-            print(foo.session_mutual)
+            accepted_session = Sessions_Accepted.objects.create(session=_session, tutor=user, tutee=tutee, session_mutual = new_mutual_sched)
+            print(accepted_session.session_mutual)
         return redirect('home')
     else:
         current_session = Sessions.objects.get(id = session_id)
@@ -595,6 +583,7 @@ def pay_balance(request):
             tutor_name = session.tutor.first_name + ' ' + session.tutor.last_name
 
             token = create_token(number=card_number, exp_month=exp_month, exp_year=exp_year, cvc=security_code)
+            print(token)
             if 'errors' in token and token['errors'][0]['status'] == '400':
                 messages.error(request, token['errors'][0]['detail'])
                 return render(request, "users/pay_balance.html", {
@@ -750,6 +739,27 @@ def edit_card(request):
 
     return render(request, 'users/edit_card.html', {'credit_user':user})
 
+@login_required
+def edit_resume(request):
+    user = request.user
+    tutor = None
+    try:
+        tutor = Tutor.objects.get(user=user)
+        if (request.method == 'POST'):
+            new_resume = request.FILES.get('new_resume')
+
+            tutor.resume = new_resume
+            tutor.save()
+
+            return redirect('profile')
+    except Exception as ex:
+        template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+        message = template.format(type(ex).__name__, ex.args)
+        print(message)
+        messages.error(request, 'Error please input valid values for each field')
+
+    return render(request, 'users/edit_resume.html', {'tutor' : tutor})
+
 
 @login_required
 def profile(request):
@@ -775,7 +785,6 @@ def profile(request):
     return render(request, 'users/profile.html', {
         'current_user':user2, 
         'location_user':loc, 
-        'credit_user':user,
         'picture_form': picture_form
         })
 

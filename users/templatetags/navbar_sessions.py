@@ -23,8 +23,8 @@ def sessions_unconfirmed(user):
 	sessions_unconfirmed = Sessions_Ended.objects.filter(unconfirmed=True, final=False)
 
 	if user.is_tutee:
-		sessions_unconfirmed = sorted(sessions_unconfirmed.filter(with_tutee=True))
+		sessions_unconfirmed = sessions_unconfirmed.filter(with_tutee=True)
 	else:
-		sessions_unconfirmed = sorted(sessions_unconfirmed.filter(with_tutee=False))
+		sessions_unconfirmed = sessions_unconfirmed.filter(with_tutee=False)
 
 	return sessions_unconfirmed
