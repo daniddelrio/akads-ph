@@ -8,7 +8,7 @@
   <div class="container user" id='map-check' stat='tutor'>
     <h4 class="akads-dark-blue-text">Upcoming</h4>
     <strong class="akads-mid-blue-text">Below are the details of your upcoming sessions.</strong>
-      
+
     {% load static %}
     {% if session_group %}
     {% for individual_session in session_group %}
@@ -32,7 +32,7 @@
               <li class="akads-dark-blue-text"><strong>Location:</strong> {{individual_session.session.location}}</li>
               <li class="akads-dark-blue-text"><strong>Contact Number: </strong>{{cellnum}}</li>
               <li class="akads-dark-blue-text"><strong>Mutual Schedule: </strong>{{ individual_session.session_mutual }} </li>
-              
+
               <br>
               <li class="akads-dark-blue-text"><a class="btn akads-blue waves-effect waves-light" href="{% url 'complete_session' individual_session.session.id %}">Complete Session</a></li>
             </ul>
